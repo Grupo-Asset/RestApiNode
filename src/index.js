@@ -10,7 +10,7 @@ const numeral = require('numeral');
 // Configuración del puerto
 const PORT = 8080;
 require('dotenv').config();
-//test
+
 const PaymentController = require("./Controllers/PaymentController");
 const PaymentService = require("./Services/PaymentService");
 const PaymentInstance = new PaymentController(new PaymentService());
@@ -84,7 +84,10 @@ let userId;
 let date;
 let products= [];
 let payment_id;
+
+
 app.post("/create_preference", (req, res) => {
+	
 	transfer = req.body.transfer
     console.log(req.body);
     console.log('req.body stringify\n\n\n');
@@ -148,7 +151,8 @@ app.get('/feedback', async function (req, res) {
 	console.log('req.query desde /feedback');
 	console.log(req.query);
 	console.log('transfer:',transfer)
-	
+	const fechaActual = new Date();
+	const fechaUnix = Math.floor(fechaActual.getTime() / 1000);
 
 
 
@@ -176,6 +180,34 @@ app.get('/feedback', async function (req, res) {
 
 
     if(transfer){
+		if(transfer.facturaInfo){
+			console.log("entro por aca\n\n\n\n\n\n")
+			console.log("contact id?: " + transfer.facturaInfo.contact)
+			sdk.createDocument({
+                items: [
+					{
+						name: transfer.description,
+						subtotal: transfer.amount
+					}
+                ],
+                customFields: [
+                    {
+                        "Financiacion": "70/30",
+                    },
+                    {
+                        "Descripcion": transfer. description,
+                        "Fecha":new Date().toLocaleDateString(),
+                        "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
+                        "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
+                        },
+                ],
+                applyContactDefaults: true,
+                contactId: transfer.facturaInfo.contact,
+                date: fechaUnix,
+            }, {docType: 'purchaseorder'})
+
+
+		}else{
         console.log(transfer);
 
         const fechaActual = new Date();
@@ -184,7 +216,7 @@ app.get('/feedback', async function (req, res) {
         let locker = null;
         if(transfer.storage==="Almacenamiento L"){
             locker = "64662AB670EB6571F10A6942"
-        }
+        }	
         else if(transfer.storage==="Almacenamiento M"){
             locker = "64662A98C275900011057387"
         }
@@ -194,7 +226,7 @@ app.get('/feedback', async function (req, res) {
         
 
         let factura = {};
-        sdk.createDocument({
+        await sdk.createDocument({
             items: [
                 {
                     sku: transfer.sku
@@ -235,7 +267,7 @@ app.get('/feedback', async function (req, res) {
             contactId: transfer.user.id,
             date: fechaUnix,
             dueDate:2*fechaUnix
-        }, {docType: 'invoice'}).then(({ data }) => {
+        }, {docType: 'invoice'}).then(async ({ data }) => {
             console.log(data);
             factura = data;
             console.log('factura desde create document', factura)
@@ -244,7 +276,7 @@ app.get('/feedback', async function (req, res) {
             console.log('factura desde pay Document', factura)
     
             //aca iria el if para ver si pago en efectivo o algo asi
-            sdk.payDocument(
+            await sdk.payDocument(
                 {
                 date: fechaUnix, 
                 amount: (transfer.amount*1.21)/transfer.dolarValue}, 
@@ -299,7 +331,7 @@ app.get('/feedback', async function (req, res) {
                 date: fechaUnix,
             }, {docType: 'purchaseorder'})
 
-        );}
+        );}}
 
 
 
