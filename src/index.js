@@ -52,6 +52,7 @@ app.use(require('./routes/getAllFacturas'));
 app.use(require('./routes/uptadeUser'));
 app.use(require('./routes/getFacturaPDF'));
 app.use(require('./routes/getDolar'));
+app.use(require('./routes/getDolarV2'));
 
 //starting
 const server = app.listen(PORT, () => {
@@ -62,6 +63,10 @@ server.on('error', (error) => {
     if (error.syscall !== 'listen') {
         throw error;
     }
+
+
+
+
 
     console.log(`Port ${PORT} is already in use. Using next available port...`);
 
