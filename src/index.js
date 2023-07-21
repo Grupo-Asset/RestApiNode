@@ -112,12 +112,12 @@ app.post("/create_preference", (req, res) => {
 
 
 	//tax
-	items.push({
-		title: "Tax",
-		unit_price: Number((req.body.amount*0.21)),
-		quantity: 1,
+	// items.push({
+	// 	title: "Tax",
+	// 	unit_price: Number((req.body.amount*0.21)),
+	// 	quantity: 1,
 
-	})
+	// })
 
 	let preference = {
 		items: items,
@@ -180,24 +180,26 @@ app.get('/feedback', async function (req, res) {
 
 
     if(transfer){
+
 		if(transfer.facturaInfo){
-			console.log("entro por aca\n\n\n\n\n\n")
-			console.log("contact id?: " + transfer.facturaInfo.contact)
+			console.log("\n\n entro por aca\n\n")
+			console.log("Transfer Data: " + transfer + "\n\n")
+			console.log("contact id?: " + transfer.facturaInfo.contact+ "\n\n")
 			sdk.createDocument({
                 items: [
 					{
 						name: transfer.description,
-						subtotal: transfer.amount
+						subtotal: (transfer.amount)/numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00')
 					}
                 ],
                 customFields: [
                     {
-                        "Financiacion": "70/30",
+                        "Financiacion": transfer.financiation,
                     },
                     {
                         "Descripcion": transfer. description,
                         "Fecha":new Date().toLocaleDateString(),
-                        "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
+                        "Valor dolar": numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00'), 
                         "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
                         },
                 ],
@@ -206,9 +208,24 @@ app.get('/feedback', async function (req, res) {
                 date: fechaUnix,
             }, {docType: 'purchaseorder'})
 
+            // await sdk.payDocument(
+            //     {
+            //     date: fechaUnix, 
+            //     amount: (transfer.amount*1.21)/transfer.dolarValue}, 
+            //     {
+            //     docType: 'invoice',
+            //     documentId: transfer.facturaInfo.id
+            //     }
+            // )
+            //     .then(({ data }) => console.log(data))
+            //     .catch(err => console.error(err));
+        
+        
+
 
 		}else{
-        console.log(transfer);
+            console.log("\n\n/feed entro por el else\n es una compra de 0 por lo tanto se crea la fc\n")
+        // console.log(transfer);
 
         const fechaActual = new Date();
         const fechaUnix = Math.floor(fechaActual.getTime() / 1000);
@@ -254,10 +271,10 @@ app.get('/feedback', async function (req, res) {
             ],
             customFields: [
                 {
-                    "Financiacion": "70/30",
+                    "Financiacion": transfer.financiation,
                 },
                 {
-                    "pago N":"1/12",
+                    "Descripcion": transfer. description,
                     "Fecha":new Date().toLocaleDateString(),
                     "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
                     "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
@@ -317,13 +334,13 @@ app.get('/feedback', async function (req, res) {
                 ],
                 customFields: [
                     {
-                        "Financiacion": "70/30",
+                        "Financiacion": transfer.financiation,
                     },
                     {
-                        "pago N":"1/12",
+                        "Descripcion":"0/12",
                         "Fecha":new Date().toLocaleDateString(),
-                        "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
-                        "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
+                        "Cotizacion Dolar": numeral(transfer.dolarValue).format('0,0.00'), 
+                        "Pago en pesos": `ARS${numeral(transfer.amount).format('0.0,0')}`
                         },
                 ],
                 applyContactDefaults: true,
