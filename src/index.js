@@ -53,7 +53,7 @@ app.use(require('./routes/uptadeUser'));
 app.use(require('./routes/getFacturaPDF'));
 app.use(require('./routes/getDolar'));
 app.use(require('./routes/getDolarV2'));
-
+app.use(require('./routes/getDolarV3'));
 //starting
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
