@@ -181,21 +181,22 @@ app.get('/feedback', async function (req, res) {
 
     for (const servicio of data) {
         listaServicios.push(servicio); // Agregar cada producto a la lista
+
     }
 
 
     if(transfer){
 
-		if(transfer.facturaInfo){
-			console.log("\n\n entro por aca\n\n")
-			console.log("Transfer Data: " + transfer + "\n\n")
-			console.log("contact id?: " + transfer.facturaInfo.contact+ "\n\n")
-			sdk.createDocument({
+        if(transfer.facturaInfo){
+            console.log("\n\n entro por aca\n\n")
+            console.log("Transfer Data: " + transfer + "\n\n")
+            console.log("contact id?: " + transfer.facturaInfo.contact+ "\n\n")
+            sdk.createDocument({
                 items: [
-					{
-						name: transfer.description,
-						subtotal: (transfer.amount)/numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00')
-					}
+                    {
+                        name: transfer.description,
+                        subtotal: (transfer.amount)/numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00')
+                    }
                 ],
                 customFields: [
                     {
@@ -228,8 +229,13 @@ app.get('/feedback', async function (req, res) {
         
 
 
-		}else{
-            console.log("\n\n/feed entro por el else\n es una compra de 0 por lo tanto se crea la fc\n")
+        }else{
+            console.log("\n\n/feed entro por el else\n es una compra de 0 por lo tanto se crea la fc\n",
+            "este es el valor de transfer:",
+            transfer,
+            "este es el valor de req.query, toda la info del codigo",
+            req.query
+            )
         // console.log(transfer);
 
         const fechaActual = new Date();
@@ -307,11 +313,15 @@ app.get('/feedback', async function (req, res) {
                 documentId: factura.id
                 }
             )
-                .then(({ data }) => console.log(data))
-                .catch(err => console.error(err));
+            .then(({ data }) => console.log(data))
+            .catch(err => console.error(err));
         
-        }).catch(err => console.error(err)).then(
-            ()=> sdk.createDocument({
+            }).catch(err => console.error(err))
+        
+        
+        .then(
+            ()=> sdk.createDocument(
+                {
                 items: [
                     {
                         sku: transfer.sku
@@ -351,9 +361,13 @@ app.get('/feedback', async function (req, res) {
                 applyContactDefaults: true,
                 contactId: transfer.user.id,
                 date: fechaUnix,
-            }, {docType: 'purchaseorder'})
+            }, {docType: 'purchaseorder'}
+            )
 
-        );}}
+        );
+        }
+        
+    }
 
 
 
@@ -363,17 +377,19 @@ app.get('/feedback', async function (req, res) {
 
 
 	
-	res.redirect(`http://localhost:3000/?status=${req.query.status}`)
-	// res.json({
-	// 	Payment: req.query.payment_id,
-	// 	Status: req.query.status,
-	// 	MerchantOrder: req.query.merchant_order_id
-	// });
-	//IMPACTO CON HOLDED
-	sdk.auth('c1e86f21bcc5fdedc6c36bd30cb5b596');
+    res.redirect(`http://localhost:3000/?status=${req.query.status}`)
+    // res.json({
+    // 	Payment: req.query.payment_id,
+    // 	Status: req.query.status,
+    // 	MerchantOrder: req.query.merchant_order_id
+    // });
+    //IMPACTO CON HOLDED
+    sdk.auth('c1e86f21bcc5fdedc6c36bd30cb5b596');
 
 
-});
+}
+
+);
 
 //preparado para un futuro refactor de pagos  y aplicar mejor mvc
 app.post("/payment", (req, res) => {
