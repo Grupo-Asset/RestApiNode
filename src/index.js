@@ -153,8 +153,7 @@ app.post("/create_preference", (req, res) => {
 });
 
 app.get('/feedback', async function (req, res) {
-	console.log('req.query desde /feedback');
-	console.log(req.query);
+	console.log('req.query desde /feedback', req.query);
 	console.log('transfer:',transfer)
 	const fechaActual = new Date();
 	const fechaUnix = Math.floor(fechaActual.getTime() / 1000);
@@ -257,7 +256,7 @@ app.get('/feedback', async function (req, res) {
         await sdk.createDocument({
             items: [
                 {
-                    sku: transfer.sku
+                    sku: transfer.sku? transfer.sku: transfer.description
                 },
                 {
                     serviceId: locker,
@@ -295,13 +294,16 @@ app.get('/feedback', async function (req, res) {
             contactId: transfer.user.id,
             date: fechaUnix,
             dueDate:2*fechaUnix
-        }, {docType: 'invoice'}).then(async ({ data }) => {
+        }, {docType: 'invoice'})
+        
+        
+        .then(async ({ data }) => {
             console.log(data);
-            factura = data;
-            console.log('factura desde create document', factura)
+            factura = await data;
+            console.log('factura desde create document', await factura)
             console.log("aca empieza el pago. req body",transfer);
-            console.log("document id",factura.id);
-            console.log('factura desde pay Document', factura)
+            console.log("document id",await factura.id);
+            console.log('factura desde pay Document', await factura)
     
             //aca iria el if para ver si pago en efectivo o algo asi
             await sdk.payDocument(
