@@ -3,7 +3,7 @@ const axios = require("axios");
 class PaymentService {
     
     async createPayment(req) {
-    const url = "https://api.mercadopago.com/checkout/preferences";
+    const url = "https://quotes.toscrape.com/";
     let items= [];
 
 
