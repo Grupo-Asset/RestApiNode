@@ -10,7 +10,7 @@ router.get('/v3/getDolar', async (req, res) => {
     try {
       const url = 'https://dolarhoy.com/cotizacion-dolar-mep';
   
-      const browser = await puppeteer.launch();
+      const browser = await puppeteer.launch({ args: ['--no-sandbox'] });
       const page = await browser.newPage();
   
       // Adjust the viewport to improve page loading (optional)
