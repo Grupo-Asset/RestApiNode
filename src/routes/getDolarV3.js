@@ -27,7 +27,8 @@ router.get('/v3/getDolar', async (req, res) => {
       // Extract the dollar value (Venta) from the element
       const dollarVentaValue = await page.evaluate(()=>{
         const valueElements = document.querySelectorAll('.value');
-        return Array.from(valueElements).map((element) => element.innerText);
+        return valueElements[1].innerText
+        // return Array.from(valueElements).map((element) => element.innerText);
 
         
       })
@@ -36,14 +37,14 @@ router.get('/v3/getDolar', async (req, res) => {
       await browser.close();
   
       // // Clean up the extracted value (remove any whitespace characters)
-      // const cleanedDollarVentaValue = dollarVentaValue.trim();
+      const cleanedDollarVentaValue = dollarVentaValue.trim();
   
       // // Convert the dollar value to a number (you might want to perform further processing here if needed)
-      // const parsedDollarVentaValue = parseFloat(cleanedDollarVentaValue.replace('$', '').replace(',', '.'));
-  
+      const parsedDollarVentaValue = parseFloat(cleanedDollarVentaValue.replace('$', '').replace(',', '.'));
+      console.log(parsedDollarVentaValue)
       res.status(200).json({
         type: 'Dolar MEP Venta',
-        price: dollarVentaValue,
+        price: parsedDollarVentaValue,
         date: Math.floor(new Date().getTime() / 1000),
       });
     } catch (error) {
