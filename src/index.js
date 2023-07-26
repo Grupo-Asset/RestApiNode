@@ -95,7 +95,7 @@ app.post("/create_preference", (req, res) => {
 
 	let items= [];
 
-
+//roto?
 	//lote
 	// items.push({
 	// 	title: req.body.description,
