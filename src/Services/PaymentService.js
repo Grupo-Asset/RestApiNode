@@ -3,7 +3,7 @@ const axios = require("axios");
 class PaymentService {
     
     async createPayment(req) {
-    const url = "https://api.mercadopago.com/checkout/preferences";
+    const url = "https://api.mercadopago.com/checkout/preferences";;
     let items= [];
 
 
@@ -15,13 +15,16 @@ class PaymentService {
 	});
 
 
-	//tax
-	items.push({
-		title: "Tax",
-		unit_price: Number((req.body.amount*0.21)),
-		quantity: 1,
-
-	})
+	// tax
+    if(req.body.tax){
+        items.push({
+            title: "Tax",
+            unit_price: Number((req.body.amount*req.body.tax)),
+            quantity: 1,
+    
+        })
+        
+    }
 
 	let preference = {
 		items: items,

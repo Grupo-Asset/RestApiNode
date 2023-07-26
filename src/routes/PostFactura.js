@@ -5,6 +5,8 @@ const user = require("./loginV2");
 const numeral = require('numeral');
 
 
+//DESUSO TEMPORAL, REMPLAZADO POR /feedback (index 147)
+
 router.post('/v1/venta', async (req, res) => {
     console.log(req.body)
     sdk.auth('c1e86f21bcc5fdedc6c36bd30cb5b596');

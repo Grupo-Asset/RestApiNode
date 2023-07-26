@@ -1,3 +1,4 @@
+let transfer= '';
 const express = require('express');
 const app = express();
 const cors = require('cors');
@@ -5,6 +6,7 @@ const morgan = require('morgan');
 const mercadopago = require('mercadopago');
 const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
 const ventaRouter = require('./routes/PostFactura')
+const numeral = require('numeral');
 // Configuración del puerto
 require('dotenv').config();
 
@@ -19,6 +21,7 @@ const FunnelInstance = new FunnelController(new FunnelService());
 
 
 const path = require('path');
+const { default: axios } = require('axios');
 const filePath = path.join(__dirname, 'index.html');
 app.get("/", function (req, res) {
 	res.status(200).sendFile(filePath);
@@ -36,7 +39,7 @@ app.use(cors());
 //routes
 app.use(require('./routes/test'));
 //POST
-app.use(require('./routes/PostFactura'));
+app.use(require('./routes/PostFactura'));//v1/venta
 app.use(require('./routes/Register'));
 //GET
 app.use(require('./routes/getAll'));//contactos
@@ -48,7 +51,8 @@ app.use(require('./routes/getAllFacturas'));
 app.use(require('./routes/uptadeUser'));
 app.use(require('./routes/getFacturaPDF'));
 app.use(require('./routes/getDolar'));
-
+app.use(require('./routes/getDolarV2'));
+app.use(require('./routes/getDolarV3'));
 //starting
 
 // use PORT provided in enviroment or default to 3000
@@ -79,8 +83,10 @@ let date;
 let products= [];
 let payment_id;
 
+
 app.post("/create_preference", (req, res) => {
 	
+	transfer = req.body.transfer
     console.log(req.body);
     console.log('req.body stringify\n\n\n');
     console.log(JSON.stringify(req.body));
@@ -104,19 +110,19 @@ app.post("/create_preference", (req, res) => {
 
 
 	//tax
-	items.push({
-		title: "Tax",
-		unit_price: Number((req.body.amount*0.21)),
-		quantity: 1,
+	// items.push({
+	// 	title: "Tax",
+	// 	unit_price: Number((req.body.amount*0.21)),
+	// 	quantity: 1,
 
-	})
+	// })
 
 	let preference = {
 		items: items,
 		back_urls: {
-			"success": "grupo-asset.com/feedback",
-			"failure": "grupo-asset.com/feedback",
-			"pending": "grupo-asset.com/feedback"
+			"success": `http://localhost:8080/${req.body.backURL}`,
+			"failure": `http://localhost:8080/${req.body.backURL}`,
+			"pending": `http://localhost:8080/${req.body.backURL}`
 		},
 		auto_return: "approved",//approved, all deberia ser automatico
 		// notification_url: "http://localhost:3000/feedback",
@@ -139,16 +145,251 @@ app.post("/create_preference", (req, res) => {
 
 });
 
-app.get('/feedback', function (req, res) {
-	console.log('req.query');
-	console.log(req.query);
-	res.redirect(`https://grupo-asset.com/?status=${req.query.status}`)
+app.get('/feedback', async function (req, res) {
+	console.log('req.query desde /feedback', req.query);
+	console.log('transfer:',transfer)
+	const fechaActual = new Date();
+	const fechaUnix = Math.floor(fechaActual.getTime() / 1000);
 
 
-});
+
+
+	sdk.auth('c1e86f21bcc5fdedc6c36bd30cb5b596');
+
+
+    
+    // const { data } = await sdk.listProducts();
+    
+    // const listaProductos = []; 
+
+    // for (const producto of data) {
+    //     listaProductos.push(producto); // Agregar cada producto a la lista
+    // }
+
+
+    const { data }  = await sdk.listServices();
+
+    const listaServicios= [];
+
+    for (const servicio of data) {
+        listaServicios.push(servicio); // Agregar cada producto a la lista
+
+    }
+
+
+    if(transfer){
+
+        if(transfer.facturaInfo){
+            console.log("\n\n entro por aca\n\n")
+            console.log("Transfer Data: " + transfer + "\n\n")
+            console.log("contact id?: " + transfer.facturaInfo.contact+ "\n\n")
+            sdk.createDocument({
+                items: [
+                    {
+                        name: transfer.description,
+                        subtotal: (transfer.amount)/numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00')
+                    }
+                ],
+                customFields: [
+                    {
+                        "Financiacion": transfer.financiation,
+                    },
+                    {
+                        "Descripcion": transfer. description,
+                        "Fecha":new Date().toLocaleDateString(),
+                        "Valor dolar": numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00'), 
+                        "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
+                        },
+                ],
+                applyContactDefaults: true,
+                contactId: transfer.facturaInfo.contact,
+                date: fechaUnix,
+            }, {docType: 'purchaseorder'})
+
+            // await sdk.payDocument(
+            //     {
+            //     date: fechaUnix, 
+            //     amount: (transfer.amount*1.21)/transfer.dolarValue}, 
+            //     {
+            //     docType: 'invoice',
+            //     documentId: transfer.facturaInfo.id
+            //     }
+            // )
+            //     .then(({ data }) => console.log(data))
+            //     .catch(err => console.error(err));
+        
+        
+
+
+        }else{
+            console.log("\n\n/feed entro por el else\n es una compra de 0 por lo tanto se crea la fc\n",
+            "este es el valor de transfer:",
+            transfer,
+            "este es el valor de req.query, toda la info del codigo",
+            req.query
+            )
+        // console.log(transfer);
+
+        const fechaActual = new Date();
+        const fechaUnix = Math.floor(fechaActual.getTime() / 1000);
+        
+        let locker = null;
+        if(transfer.storage==="Almacenamiento L"){
+            locker = "64662AB670EB6571F10A6942"
+        }	
+        else if(transfer.storage==="Almacenamiento M"){
+            locker = "64662A98C275900011057387"
+        }
+        else{
+            locker = "64662A7C6B56EB8ADC009299"
+        }
+        
+
+        let factura = {};
+        await sdk.createDocument({
+            items: [
+                {
+                    sku: transfer.sku? transfer.sku: transfer.description
+                },
+                {
+                    serviceId: locker,
+                    units:1,
+                    subtotal: 0
+                },
+                {
+                    serviceId:"645D044E23E518E60F0135A3", //SUM
+                    units: transfer.sum,
+                    subtotal: 0
+                },
+                {
+                    serviceId:"64662B54CA7D9D6A830593AE", //KINDER
+                    units: transfer.guarderia,
+                    subtotal: 0
+                },
+                {
+                    serviceId:"646629D3E5CA046AA701BA42", //COWORKING
+                    units: transfer.cw,
+                    subtotal: 0
+                }
+            ],
+            customFields: [
+                {
+                    "Financiacion": transfer.financiation,
+                },
+                {
+                    "Descripcion": transfer. description,
+                    "Fecha":new Date().toLocaleDateString(),
+                    "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
+                    "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
+                    },
+            ],
+            applyContactDefaults: true,
+            contactId: transfer.user.id,
+            date: fechaUnix,
+            dueDate:2*fechaUnix
+        }, {docType: 'invoice'})
+        
+        
+        .then(async ({ data }) => {
+            console.log(data);
+            factura = await data;
+            console.log('factura desde create document', await factura)
+            console.log("aca empieza el pago. req body",transfer);
+            console.log("document id",await factura.id);
+            console.log('factura desde pay Document', await factura)
+    
+            //aca iria el if para ver si pago en efectivo o algo asi
+            await sdk.payDocument(
+                {
+                date: fechaUnix, 
+                amount: (transfer.amount*1.21)/transfer.dolarValue}, 
+                {
+                docType: 'invoice',
+                documentId: factura.id
+                }
+            )
+            .then(({ data }) => console.log(data))
+            .catch(err => console.error(err));
+        
+            }).catch(err => console.error(err))
+        
+        
+        .then(
+            ()=> sdk.createDocument(
+                {
+                items: [
+                    {
+                        sku: transfer.sku
+                    },
+                    {
+                        serviceId: locker,
+                        units:1,
+                        subtotal: 0
+                    },
+                    {
+                        serviceId:"645D044E23E518E60F0135A3", //SUM
+                        units: transfer.sum,
+                        subtotal: 0
+                    },
+                    {
+                        serviceId:"64662B54CA7D9D6A830593AE", //KINDER
+                        units: transfer.guarderia,
+                        subtotal: 0
+                    },
+                    {
+                        serviceId:"646629D3E5CA046AA701BA42", //COWORKING
+                        units: transfer.cw,
+                        subtotal: 0
+                    }
+                ],
+                customFields: [
+                    {
+                        "Financiacion": transfer.financiation,
+                    },
+                    {
+                        "Descripcion":"0/12",
+                        "Fecha":new Date().toLocaleDateString(),
+                        "Cotizacion Dolar": numeral(transfer.dolarValue).format('0,0.00'), 
+                        "Pago en pesos": `ARS${numeral(transfer.amount).format('0.0,0')}`
+                        },
+                ],
+                applyContactDefaults: true,
+                contactId: transfer.user.id,
+                date: fechaUnix,
+            }, {docType: 'purchaseorder'}
+            )
+
+        );
+        }
+        
+    }
+
+
+
+
+
+
+
+
+	
+    res.redirect(`https://grupo-asset.com/?status=${req.query.status}`)
+    // res.json({
+    // 	Payment: req.query.payment_id,
+    // 	Status: req.query.status,
+    // 	MerchantOrder: req.query.merchant_order_id
+    // });
+    //IMPACTO CON HOLDED
+    sdk.auth('c1e86f21bcc5fdedc6c36bd30cb5b596');
+
+
+}
+
+);
 
 //preparado para un futuro refactor de pagos  y aplicar mejor mvc
 app.post("/payment", (req, res) => {
+	transfer = req.body
+	console.log("req.body /payment:",req.body)
 	PaymentInstance.getPaymentLink(req, res);
 });
 

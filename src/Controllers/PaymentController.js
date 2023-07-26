@@ -6,8 +6,9 @@ class PaymentController {
     async getPaymentLink(req, res) {
         try{
             const payment = await this.paymentServcice.createPayment(req);
-
+            console.log('\n\n\n\n\n\n\n\n\n\n PAYMENT.data QUE DEVOLVIO MP AL CREATEPREFERENCE\n',payment)
             return res.json(payment); 
+
         } catch(error) {
             console.log("error payment controller", error);
 
