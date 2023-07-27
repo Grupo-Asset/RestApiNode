@@ -211,8 +211,25 @@ app.get('/feedback', async function (req, res) {
                 applyContactDefaults: true,
                 contactId: transfer.facturaInfo.contact,
                 date: fechaUnix,
-            }, {docType: 'purchaseorder'})
-
+            }, {docType: 'purchaseorder'}).then(async ({data}) => {
+                console.log('actualizando factura 1/2, pago:', data);
+                console.log('1/2 transfer:', transfer);
+                console.log('1/2 transfer custom fields:', transfer.facturaInfo.customFields);
+                console.log('1/2 (transfer.amount*1.21)/transfer.dolarValue:', (transfer.amount*1.21)/transfer.facturaInfo.customFields[3].value);
+                factura = await data;
+                await sdk.payDocument(
+                    {
+                        date: fechaUnix,
+                        amount: (transfer.amount*1.21)/transfer.facturaInfo.customFields[3].value
+                    },
+                    {
+                        docType: 'invoice',
+                        documentId: transfer.facturaInfo.id
+                        }
+                ).then(({data}) => console.log(data)).catch(error => console.error(error));
+                    
+            }
+            ).catch(error => console.error(error));
             // await sdk.payDocument(
             //     {
             //     date: fechaUnix, 
@@ -223,7 +240,7 @@ app.get('/feedback', async function (req, res) {
             //     }
             // )
             //     .then(({ data }) => console.log(data))
-            //     .catch(err => console.error(err));
+            //     .catch(err => console.error(err))
         
         
 
