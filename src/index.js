@@ -256,7 +256,7 @@ app.get('/feedback', async function (req, res) {
         await sdk.createDocument({
             items: [
                 {
-                    sku: transfer.sku? transfer.sku: transfer.description
+                    sku: transfer.sku
                 },
                 {
                     serviceId: locker,
@@ -284,7 +284,7 @@ app.get('/feedback', async function (req, res) {
                     "Financiacion": transfer.financiation,
                 },
                 {
-                    "Descripcion": transfer. description,
+                    "Descripcion": transfer.financiation=='contado'? "1/2": "0/12",
                     "Fecha":new Date().toLocaleDateString(),
                     "Valor dolar": numeral(transfer.dolarValue).format('0,0.00'), 
                     "Pago en pesos": `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`
@@ -354,7 +354,7 @@ app.get('/feedback', async function (req, res) {
                         "Financiacion": transfer.financiation,
                     },
                     {
-                        "Descripcion":"0/12",
+                        "Descripcion":transfer.financiation=='contado'? "1/2": "0/12",
                         "Fecha":new Date().toLocaleDateString(),
                         "Cotizacion Dolar": numeral(transfer.dolarValue).format('0,0.00'), 
                         "Pago en pesos": `ARS${numeral(transfer.amount).format('0.0,0')}`
