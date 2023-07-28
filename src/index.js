@@ -220,7 +220,7 @@ app.get('/feedback', async function (req, res) {
                 await sdk.payDocument(
                     {
                         date: fechaUnix,
-                        amount: (transfer.amount*1.21)/transfer.facturaInfo.customFields[3].value
+                        amount: (transfer.amount)/transfer.facturaInfo.customFields[3].value
                     },
                     {
                         docType: 'invoice',
@@ -229,21 +229,35 @@ app.get('/feedback', async function (req, res) {
                 ).then(({data}) => console.log(data)).catch(error => console.error(error));
                     
             }
-            ).catch(error => console.error(error));
-            // await sdk.payDocument(
-            //     {
-            //     date: fechaUnix, 
-            //     amount: (transfer.amount*1.21)/transfer.dolarValue}, 
-            //     {
-            //     docType: 'invoice',
-            //     documentId: transfer.facturaInfo.id
-            //     }
-            // )
-            //     .then(({ data }) => console.log(data))
-            //     .catch(err => console.error(err))
-        
-        
+            ).catch(error => console.error(error)).then(async ()=> {
+                console.log('actualizando factura 2/2, customFields:', data);
+                console.log('\n\n2/2 transfer:', transfer, '\n\n');
+                const date = new Date().toLocaleDateString()
+                const valorDolar =  numeral(transfer.facturaInfo.customFields[3].value).format('0,0.00')
+                const montoPesos = `ARS$${numeral(transfer.amount*1.21).format('0.0,0')}`;
+                await sdk.updateDocument({
+                    customFields: [
+                    // {
+                    //     field: 'Financiacion',
+                    //     value:  transfer.financiation
+                    // },
+                    {field: 'Descripcion', value: transfer.description},
+                    // {field: 'Fecha', value: date},
+                    // {field: 'Valor dolar', value: valorDolar},
+                    // {
+                    //     field: 'Pago en pesos',
+                    //     value: montoPesos
+                    // }
+                    ]
+                }, {
+                    docType: 'invoice',
+                    documentId: transfer.facturaInfo.id
+                })
+                .then(({ data }) => console.log(data))
+                .catch(err => console.error(err));
+            });
 
+        
 
         }else{
             console.log("\n\n/feed entro por el else\n es una compra de 0 por lo tanto se crea la fc\n",
