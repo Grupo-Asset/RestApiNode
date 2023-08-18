@@ -337,23 +337,26 @@ app.get('/feedback', async function (req, res) {
             console.log('factura desde pay Document', await factura)
     
             //aca iria el if para ver si pago en efectivo o algo asi
-            await sdk.payDocument(
-                {
-                date: fechaUnix, 
-                amount: (transfer.amount*1.21)/transfer.dolarValue}, 
-                {
-                docType: 'invoice',
-                documentId: factura.id
-                }
-            )
-            .then(({ data }) => console.log(data))
-            .catch(err => console.error(err));
+
+            if(req.query.status !='pending'){
+                
+                await sdk.payDocument(
+                    {
+                    date: fechaUnix, 
+                    amount: (transfer.amount*1.21)/transfer.dolarValue}, 
+                    {
+                    docType: 'invoice',
+                    documentId: factura.id
+                    }
+                )
+            }
+            // .then(({ data }) => console.log(data))
+            // .catch(err => console.error(err));
         
             }).catch(err => console.error(err))
         
         
-        .then(
-            ()=> sdk.createDocument(
+        await sdk.createDocument(
                 {
                 items: [
                     {
@@ -395,7 +398,7 @@ app.get('/feedback', async function (req, res) {
                 contactId: transfer.user.id,
                 date: fechaUnix,
             }, {docType: 'purchaseorder'}
-            )
+            
 
         );
         }
