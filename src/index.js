@@ -73,7 +73,7 @@ app.listen(PORT,"0.0.0.0", function()  {
 
 
 mercadopago.configure({
-	access_token: 'APP_USR-6453243717102029-050120-86625470ed742e0c3a8dfdfa709ade8a-1362723906', //acces de prueba test user 1
+	access_token: 'TEST-5990004718573364-050309-6f5ddb7d13b533596d97451683dcf03e-1365118455', //acces de prueba test user 1
 });
 
 
