@@ -167,7 +167,7 @@ app.get('/feedback', async function (req, res) {
     
     // const { data } = await sdk.listProducts();
     
-    // const listaProductos = []; 
+    //  const listaProductos = []; 
 
     // for (const producto of data) {
     //     listaProductos.push(producto); // Agregar cada producto a la lista
