@@ -1,32 +1,36 @@
-const { Router } = require('express');
-const router= Router();
-const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
-
+import { Router } from 'express';
+import axios from 'axios';
+const router = Router();
 
 router.get('/v1/getallProducto', async (req, res) => {
+  try {
+    // Configurar las opciones para la solicitud
+    const options = {
+      method: 'GET',
+      url: 'https://api.holded.com/api/invoicing/v1/products',
+      headers: { accept: 'application/json' }
+    };
 
-    sdk.auth('343654e3d1014f792344a19ee8f40503');
-    try {
+    const response = await axios.request(options);
 
-      const { data } = await sdk.listProducts();
+    if (response.status === 200) {
+      const data = response.data;
 
-      const listaProductos = []; // Crear una lista vacía
+      const listaProductos = [];
 
       for (const producto of data) {
-        listaProductos.push(producto); // Agregar cada producto a la lista
+        listaProductos.push(producto);
       }
 
-      res.status(201).send(listaProductos); // Devolver la lista de productos
-      console.log(listaProductos);
-
-
-    } catch (err) {
-      console.error(err);
-      res.status(500).send({ error: err.message }); 
+      res.status(201).send(listaProductos);
+    } else {
+      console.error(`Error: ${response.status}`);
+      res.status(response.status).send({ error: 'Error al obtener datos de productos' });
     }
-  
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: err.message });
+  }
 });
 
-
-
-module.exports = router;
+export default router;

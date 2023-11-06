@@ -1,24 +1,28 @@
-const { Router } = require('express');
-const router= Router();
-const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+import { Router } from 'express';
+import axios from 'axios'; // Importamos axios
+const router = Router();
 
-router.get('/v1/getall', async (req, res) => {
+router.get('/', async (req, res) => {
+  try {
+    const options = {
+      method: 'GET',
+      url: 'https://api.holded.com/api/invoicing/v1/contacts',
+      headers: { accept: 'application/json', key: 'c1e86f21bcc5fdedc6c36bd30cb5b596' }
+    };
 
-    sdk.auth('343654e3d1014f792344a19ee8f40503');
-    try {
+    const response = await axios.request(options);
 
-      const { data } = await sdk.listContacts();
-      console.log(data);
-      res.send(data); // Agrega esta línea si deseas devolver los datos al cliente
-      
-    } catch (err) {
-      console.error(err);
-      res.status(500).send({ error: err.message }); // Agrega esta línea para manejar errores
+    if (response.status === 200) {
+      console.log(response.data);
+      res.send(response.data);
+    } else {
+      console.error(`Error: ${response.status}`);
+      res.status(response.status).send({ error: 'Error al obtener datos' });
     }
-  
-  });
+  } catch (err) {
+    console.error(err);
+    res.status(500).send({ error: err.message });
+  }
+});
 
-
-
-
-module.exports = router;
+export default router;

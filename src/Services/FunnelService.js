@@ -1,5 +1,5 @@
-const axios = require("axios");
-const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+import axios from 'axios';
+// const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
 
 
 class FunnelService {
@@ -38,4 +38,4 @@ class FunnelService {
             return {status: "suscripcion exitosa", error: false}
     }
 }
-module.exports = FunnelService;
+export default FunnelService;

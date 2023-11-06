@@ -1,8 +1,9 @@
-const { Router } = require('express');
-const axios = require('axios');
-const router= Router();
+import { Router } from 'express';
+import axios from 'axios';
 
-router.get('/v1/getDolar', async (req,res) => {
+const router = Router();
+
+router.get('/v1/getDolar', async (req, res) => {
 
     let config = {
       method: 'get',
@@ -20,7 +21,7 @@ router.get('/v1/getDolar', async (req,res) => {
         type: "Dolar BCBA",
         price: response.data.at(-1).v,
         date: Math.floor(new Date().getTime() / 1000)
-    })
+      })
     })
     .catch((error) => {
       console.log(error);
@@ -28,4 +29,4 @@ router.get('/v1/getDolar', async (req,res) => {
 
 });
 
-module.exports = router;
+export default router;

@@ -1,11 +1,9 @@
+import { Router } from 'express';
+import sdk from 'api';
 
-
-const { Router } = require('express');
-const router= Router();
-const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+const router = Router();
 
 router.get('/v1/login', async (req, res) => {
-
     const { email, password } = req.query;
 
     // Obtener todos los contactos de Holded con el SDK
@@ -20,9 +18,6 @@ router.get('/v1/login', async (req, res) => {
     }
   
     res.send(user); // Devolver el usuario encontrado como respuesta
-  });
+});
 
-
-
-
-module.exports = router;
+export default router;

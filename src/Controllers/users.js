@@ -1,9 +1,13 @@
- import { Router } from 'express';
-import axios from 'axios'; // Importamos axios
-const router = Router();
+import { UserModel } from "../models/user.js";
 
-router.get('/v2/login', async (req, res) => {
-  const { email, password } = req.query;
+export class UserController {
+    static async getAll (req, res) {
+      const usuarios = await UsuerModel.getAll();
+      res.json(usuarios)
+    
+    }
+    static async login (req, res) {
+        const { email, password } = req.query;
 
   try {
     // Configurar las opciones para la solicitud
@@ -27,33 +31,16 @@ router.get('/v2/login', async (req, res) => {
         res.status(401).send({ error: 'Credenciales inválidas' });
         return;
       } else {
-        
+        // Realizar una solicitud para obtener documentos (facturas y órdenes de compra)
         const [facturasResponse, ordenesCompraResponse] = await Promise.all([
           axios.get('https://api.holded.com/api/invoicing/v1/documents?docType=invoice'),
           axios.get('https://api.holded.com/api/invoicing/v1/documents?docType=purchaseorder')
         ]);
-        
-        const listaFacturas = facturasResponse.data;
-        const listaOrdenesCompras = ordenesCompraResponse.data;
-        const listaProductos = []; 
-        let productsOwn = [];
-        let servicesOwn = [];
-        let facturas = [];
-        let ordenesCompras = [];
-        
-        for (const factura of JSON.parse(data)) {
-          listaProductos.push(factura); // Agregar cada producto a la lista
-  
-          if (factura.contact === user.id) {
-            facturas.push(factura);
-            factura.products.forEach((product) => {
-              if (product.serviceId) {
-                servicesOwn.push(product);
-              } else {
-                productsOwn.push(product.name);
-              }
-            })
 
+        const facturas = facturasResponse.data;
+        const ordenesCompras = ordenesCompraResponse.data;
+
+        // Procesar los documentos y construir la respuesta
         const userDTO = {
           name: user.name,
           email: user.email,
@@ -72,6 +59,5 @@ router.get('/v2/login', async (req, res) => {
     console.error(err);
     res.status(500).send({ error: err.message });
   }
-});
-
-export default router;
+    }
+}

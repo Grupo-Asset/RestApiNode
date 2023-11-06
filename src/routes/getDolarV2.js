@@ -1,14 +1,14 @@
-const { Router } = require('express');
-const axios = require('axios');
-const router= Router();
+import { Router } from 'express';
+import axios from 'axios';
 
-router.get('/v2/getDolar', async (req,res) => {
+const router = Router();
+
+router.get('/v2/getDolar', async (req, res) => {
 
     let config = {
       method: 'get',
       maxBodyLength: Infinity,
       url: 'https://www.dolarsi.com/api/api.php?type=valoresprincipales',
-
     };
     
     axios.request(config)
@@ -18,7 +18,7 @@ router.get('/v2/getDolar', async (req,res) => {
         type: "Dolar DolarSi",
         price: response.data[4].casa.compra,
         date: Math.floor(new Date().getTime() / 1000)
-    })
+      })
     })
     .catch((error) => {
       console.log(error);
@@ -26,4 +26,4 @@ router.get('/v2/getDolar', async (req,res) => {
 
 });
 
-module.exports = router;
+export default router;

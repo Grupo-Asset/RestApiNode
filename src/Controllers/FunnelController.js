@@ -32,7 +32,7 @@ class FunnelController {
 
     
 }
-module.exports= FunnelController;
+export default FunnelController;
 //lo anoto aca para no olvidarme
 // puedo hacer que solo se haga una compra si no existe el lead con el
 //  producto relacionado en notas

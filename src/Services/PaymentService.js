@@ -1,4 +1,4 @@
-const axios = require("axios");
+import axios from 'axios';
 
 class PaymentService {
     
@@ -150,4 +150,4 @@ async payInvoice(req) {
 
 
 
-module.exports = PaymentService;
+export default PaymentService;
