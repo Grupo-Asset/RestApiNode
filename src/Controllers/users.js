@@ -40,5 +40,14 @@ export class UserController {
         }
       }
     }
+
+    static async update(req,res){
+      try {
+        const result = await UserModel.update(req.body);
+        res.status(result.status).send(result.message);
+      } catch(error){
+        res.status(500).send({error:error.message})
+      }
+    }
   
 }
