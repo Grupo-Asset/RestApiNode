@@ -1,5 +1,17 @@
-import axios from 'axios'; // Importamos axios
-let userList=[];
+import axios from 'axios';
+import { z } from 'zod';
+
+let userList = [];
+
+// Definir el esquema Zod
+const UserDTO = z.object({
+    nombre: z.string(),
+    email: z.string().email(),
+    mobile: z.string(),
+    password: z.string(),
+});
+
+async function init() {
 try {
     const options = {
         method: 'GET',
@@ -14,84 +26,82 @@ try {
         userList = response.data;
     } else {
         console.error(`Error: ${response.status}`);
-        
     }
 } catch (err) {
     console.error(err);
-    
+    }
 }
 
 export class UserModel {
-    static async getAll(){
-        return userList;
+    static async init() {
+    await init();
     }
 
-    static async getUser(){
-        const user = userList.find(
-            (contact) => 
-            contact.email === email && 
-            String(contact.socialNetworks?.website) === String(password)
-        );
+    static async getAll(){
+    return userList;
+    }
+
+    static async getUser(email, password){
+    const user = userList.find(
+        (contact) => 
+        contact.email === email && 
+        String(contact.socialNetworks?.website) === String(password)
+    );
+
+    if (!user) {
+        throw new Error('Usuario no encontrado');
+    }
+
+    const userDTO = {
+        name: user.name,
+        email: user.email,
+        mobile: user.mobile,
+        id: user.id,
+        password: String(user.socialNetworks?.website),
+        fechaNac: user.iban,
+        genero: user.swift,
+        lang: user.defaults.language,
+        address: user.billAddress
+    };
+
+    return userDTO;
+    }
+
+    static async register(userDTO){
+    // Validar los datos de entrada con Zod
+    const validatedData = UserDTO.parse(userDTO);
+
+    const { nombre, email, mobile, password } = validatedData; 
+
+    try {
+      // Configurar las opciones para la solicitud
+        const options = {
+        method: 'POST',
+        url: 'https://api.holded.com/api/invoicing/v1/contacts',
+        headers: {
+            accept: 'application/json',
+            'content-type': 'application/json',
+        },
+        data: {
+            name: nombre,
+            email: email,
+            mobile: mobile,
+            socialNetworks: {
+            website: password,
+            },
+        },
+        };
+
+        const response = await axios.request(options);
+
+        if (response.status === 201) {
+        return { status: 201, message: 'Contacto creado con éxito👌👍' };
+        } else {
+        throw new Error('Error al crear el contacto');
+        }
+    } catch (err) {
+        console.error(err);
+        throw err;
+    }
     }
 }
-
-// class User {
-//   #name;
-//   #email;
-//   #mobile;
-//   #id;
-//   #productos;
-  
-//   constructor({ name = "", email = "", mobile = "", id = "", productos = [] }) {
-//     this.#name = name;
-//     this.#email = email;
-//     this.#mobile = mobile;
-//     this.#id = id;
-//     this.#productos = productos;
-//   }
-  
-
-//   // Métodos de acceso para los atributos privados
-//   getName() {
-//     return this.#name;
-//   }
-
-//   getEmail() {
-//     return this.#email;
-//   }
-
-//   getMobile() {
-//     return this.#mobile;
-//   }
-
-//   getId() {
-//     return this.#id;
-//   }
-
-//   getProductos() {
-//     return this.#productos;
-//   }
-
-//   // Métodos de modificación para los atributos privados
-//   setName(name) {
-//     this.#name = name;
-//   }
-
-//   setEmail(email) {
-//     this.#email = email;
-//   }
-
-//   setMobile(mobile) {
-//     this.#mobile = mobile;
-//   }
-
-//   setId(id) {
-//     this.#id = id;
-//   }
-
-//   setProductos(productos) {
-//     this.#productos = productos;
-//   }
-// }
-
-// module.exports = User;

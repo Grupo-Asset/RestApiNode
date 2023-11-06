@@ -23,4 +23,22 @@ export class UserController {
         res.json({ error: 'Credenciales inválidas' });
       }
     }
+
+    static async register(req, res) {
+      try {
+        const result = await UserModel.register(req.body);
+        res.status(result.status).send(result.message);
+      } catch (error) {
+        if (error.message === 'Usuario no encontrado') {
+          res.status(404).send({ error: 'Usuario no encontrado' });
+        } else if (error.message === 'Faltan datos requeridos') {
+          res.status(400).send({ error: 'Faltan datos requeridos' });
+        } else if (error.message === 'Error al crear el contacto') {
+          res.status(500).send({ error: 'Error al crear el contacto' });
+        } else {
+          res.status(500).send({ error: 'Error desconocido' });
+        }
+      }
+    }
+  
 }

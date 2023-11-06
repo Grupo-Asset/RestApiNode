@@ -52,6 +52,7 @@ import getDolarV2Router from './routes/getDolarV2.js';
 import getDolarV3Router from './routes/getDolarV3.js';
 import postFacturaRouter from './routes/PostFactura.js';
 import { userRouter } from './routes/users.js';
+import { UserModel } from './models/user.js';
 //routes
 //routes
 //routes
@@ -74,6 +75,10 @@ app.use(getDolarV2Router);
 app.use(getDolarV3Router);
 
 // Starting
+// Inicializar el modelo de usuario
+UserModel.init().then(() => {
+    console.log('UserModel initialized');
+})
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
 });
@@ -96,6 +101,8 @@ server.on('error', (error) => {
 mercadopago.configure({
     access_token: "TEST-5990004718573364-050309-6f5ddb7d13b533596d97451683dcf03e-1365118455", // Access token for test user 1
 });
+
+
 
 let userId;
 let date;
