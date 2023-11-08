@@ -1,15 +1,8 @@
 import axios from 'axios';
-import { z } from 'zod';
+
 
 let userList = [];
 
-// Definir el esquema Zod
-const UserDTO = z.object({
-    nombre: z.string(),
-    email: z.string().email(),
-    mobile: z.string(),
-    password: z.string(),
-});
 
 async function init() {
 try {
@@ -22,7 +15,7 @@ try {
     const response = await axios.request(options);
 
     if (response.status === 200) {
-        console.log(response.data);
+        // console.log(response.data);
         userList = response.data;
     } else {
         console.error(`Error: ${response.status}`);
@@ -33,6 +26,7 @@ try {
 }
 
 export class UserModel {
+
     static async init() {
     await init();
     }
@@ -69,9 +63,9 @@ export class UserModel {
 
     static async register(userDTO){
     // Validar los datos de entrada con Zod
-    const validatedData = UserDTO.parse(userDTO);
+    
 
-    const { nombre, email, mobile, password } = validatedData; 
+    const { nombre, email, mobile, password } = userDTO; 
 
     try {
       // Configurar las opciones para la solicitud
@@ -104,8 +98,9 @@ export class UserModel {
         throw err;
     }
     }
-    static async update(userDTO){
-        const usuario = req.body;
+
+    static async update(usuario){
+        
         console.log(usuario);
     
         try {
@@ -158,4 +153,6 @@ export class UserModel {
             res.status(500).send({ error: err.message });
         }  
     }
+
+    
 }

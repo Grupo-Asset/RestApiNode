@@ -1,17 +1,18 @@
 import axios from 'axios';
 
+let listaFacturas;
 
 try {
     
     const options = {
         method: 'GET',
-        url: 'https://api.holded.com/api/invoicing/v1/documents?docType=invoice',
+        url: 'https://api.holded.com/api/invoicing/v1/documents/invoice',
         headers: { accept: 'application/json', key: 'c1e86f21bcc5fdedc6c36bd30cb5b596' }
     };
 
     const response = await axios.request(options);
-    let listaFacturas;
     if (response.status === 200) {
+        // console.log(response.data)
         listaFacturas = response.data;
     } else {
         console.error(`Error: ${response.status}`);
@@ -30,7 +31,7 @@ try {
             let servicesOwn = [];
             let facturasDeUser = [];
             
-            listaFacturas.forEach(factura => {
+            await listaFacturas.forEach(factura => {
                 if (factura.contact === userId) {
                 facturasDeUser.push(factura);
             
