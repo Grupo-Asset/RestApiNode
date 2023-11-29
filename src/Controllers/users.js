@@ -9,6 +9,10 @@ export class UserController {
       const usuarios = await UserModel.getAll();
       res.json(usuarios)
     }
+    static async getUser(req,res){
+      const usuario = await UserModel.getUser(req.params.id)
+      res.json(usuario)
+    }
 
     static async login (req, res) {
       try {
@@ -67,8 +71,8 @@ export class UserController {
         console.log(validation)
         //falta testear
         if(validation.success){
-          // console.log(req)
-        const result = await UserModel.update(req.params, req.body);
+        console.log(req.params)
+        const result = await UserModel.update(req.params.id, req.body);
         if(await result){
           res.status(result.status).send(result);
         } else {
