@@ -64,10 +64,21 @@ export class UserController {
     static async update(req,res){
       try {
         const validation = validatePartialUser(req.body)
-        const result = await UserModel.update(req.body);
-        res.status(result.status).send(result.message);
+        console.log(validation)
+        //falta testear
+        if(validation.success){
+          // console.log(req)
+        const result = await UserModel.update(req.params, req.body);
+        if(await result){
+          res.status(result.status).send(result);
+        } else {
+          res.status(400).send("error")
+        }
+        }else {
+          res.status(400).json({ error: JSON.parse(validation.error.message) });
+        }
       } catch(error){
-        res.status(500).send({error:error.message})
+        res.status(501).send({error:error.message})
       }
     }
   
