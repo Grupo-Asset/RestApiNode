@@ -53,6 +53,8 @@ import getDolarV3Router from './routes/getDolarV3.js';
 import postFacturaRouter from './routes/PostFactura.js';
 import { userRouter } from './routes/users.js';
 import { UserModel } from './models/user.js';
+import { PurchaseOrderModel } from './models/purchaseOrder.js';
+import { FacturaModel } from './models/factura.js';
 //routes
 //routes
 //routes
@@ -77,7 +79,9 @@ app.use(getDolarV3Router);
 // Starting
 // Inicializar el modelo de usuario
 UserModel.init().then(() => {
-    console.log('UserModel initialized');
+    PurchaseOrderModel.init();
+    FacturaModel.init();
+    console.log('All models initialized');
 })
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
