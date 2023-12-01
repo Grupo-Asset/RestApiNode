@@ -63,6 +63,8 @@ app.use('/routes/Register', registerRouter);
 app.use('/v1/getall', getAllRouter);
 app.use('/v1/venta', postFacturaRouter); // Actualizada a la ruta correcta
 app.use('/user', userRouter )
+app.use('/inventory', inventoryRouter)
+
 
 //GET
 app.use(loginRouter);
@@ -78,6 +80,7 @@ app.use(getDolarV3Router);
 
 // Starting
 // Inicializar el modelo de usuario
+
 UserModel.init().then(() => {
     PurchaseOrderModel.init();
     FacturaModel.init();
