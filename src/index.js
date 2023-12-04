@@ -16,13 +16,6 @@ const PORT = 8080;
 import { config } from 'dotenv';
 config();
 
-import PaymentController from './Controllers/PaymentController.js';
-import PaymentService from './Services/PaymentService.js';
-const PaymentInstance = new PaymentController(new PaymentService());
-
-import FunnelController from './Controllers/FunnelController.js';
-import FunnelService from './Services/FunnelService.js';
-const FunnelInstance = new FunnelController(new FunnelService());
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 const filePath = path.join(__dirname, 'index.html');
@@ -38,14 +31,14 @@ app.use(cors());
 
 // Routes
 import testRouter from './routes/test.js';
-import registerRouter from './routes/Register.js';
+// import registerRouter from './routes/Register.js';
 import getAllRouter from './routes/getAll.js';
-import loginRouter from './routes/login.js';
-import loginV2Router from './routes/loginV2.js';
-import getAllProductoRouter from './routes/getAllProducto.js';
-import getAllServicioRouter from './routes/getAllServicio.js';
+// import loginRouter from './routes/login.js';
+// import loginV2Router from './routes/loginV2.js';
+// import getAllProductoRouter from './routes/getAllProducto.js';
+// import getAllServicioRouter from './routes/getAllServicio.js';
 import getAllFacturasRouter from './routes/getAllFacturas.js';
-import uptadeUserRouter from './routes/uptadeUser.js';
+// import uptadeUserRouter from './routes/uptadeUser.js';
 import getFacturaPDFRouter from './routes/getFacturaPDF.js';
 import getDolarRouter from './routes/getDolar.js';
 import getDolarV2Router from './routes/getDolarV2.js';
@@ -53,27 +46,29 @@ import getDolarV3Router from './routes/getDolarV3.js';
 import postFacturaRouter from './routes/PostFactura.js';
 import { inventoryRouter } from './routes/inventory.js';
 import { userRouter } from './routes/users.js';
-import { UserModel } from './models/user.js';
+import { UserModel } from './models/user.js'; // lo usa apra el init, la verdad que podria estar en el controller que ya lo importa pero no me pagan lo suficiente como para moverlo 
 import { PurchaseOrderModel } from './models/purchaseOrder.js';
 import { FacturaModel } from './models/factura.js';
+import { funnelRouter } from './routes/funnel.js';
 //routes
 //routes
 //routes
+// app.use('/routes/Register', registerRouter);
+app.use('/funnel',      funnelRouter)
 app.use('/routes/test', testRouter);
-app.use('/routes/Register', registerRouter);
-app.use('/v1/getall', getAllRouter);
-app.use('/v1/venta', postFacturaRouter); // Actualizada a la ruta correcta
-app.use('/user', userRouter )
-app.use('/inventory', inventoryRouter)
+app.use('/v1/getall',   getAllRouter);
+app.use('/v1/venta',    postFacturaRouter); // Actualizada a la ruta correcta
+app.use('/user',        userRouter )
+app.use('/inventory',   inventoryRouter)
 
 
 //GET
-app.use(loginRouter);
-app.use(loginV2Router);
-app.use(getAllProductoRouter);
-app.use(getAllServicioRouter);
+// app.use(loginRouter);
+// app.use(loginV2Router);
+// app.use(getAllProductoRouter);
+// app.use(getAllServicioRouter);
 app.use(getAllFacturasRouter);
-app.use(uptadeUserRouter);
+// app.use(uptadeUserRouter);
 app.use(getFacturaPDFRouter);
 app.use(getDolarRouter);
 app.use(getDolarV2Router);
@@ -81,6 +76,13 @@ app.use(getDolarV3Router);
 
 // Starting
 // Inicializar el modelo de usuario
+import PaymentController from './Controllers/PaymentController.js';
+import PaymentService from './Services/PaymentService.js';
+const PaymentInstance = new PaymentController(new PaymentService());
+
+import {FunnelController} from './Controllers/FunnelController.js';
+import FunnelService from './Services/FunnelService.js';
+const FunnelInstance = new FunnelController(new FunnelService());
 
 UserModel.init().then(() => {
     PurchaseOrderModel.init();

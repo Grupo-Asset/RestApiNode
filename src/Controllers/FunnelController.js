@@ -1,11 +1,11 @@
-class FunnelController {
-    constructor(funnelService){
-        this.funnelService = funnelService;
+export class FunnelController {
+    constructor(funnelModel){
+        this.funnelModel = funnelModel;
     }
 
-    async getFunnel(){
+    static async getFunnel(){
         try{
-            const funnel = await this.funnelService.getFunnel();
+            const funnel = await this.funnelModel.getFunnel();
 
             return funnel;
         }catch(error){
@@ -14,9 +14,9 @@ class FunnelController {
         }
     }
 
-    async postUser(req,res){
+   static async postUser(req,res){
         try{
-            const suscription = await this.funnelService.postUser(req);
+            const suscription = await this.funnelModel.postUser(req);
             return res.status(200).json(suscription);
         }catch(error) {
             console.log("error suscription controller", error);
@@ -29,10 +29,13 @@ class FunnelController {
             );
         }
     }
+    static async help(req,res){
+        return res.status(200).json( {help : "this is more like a test"})
+    }
 
     
 }
-export default FunnelController;
+
 //lo anoto aca para no olvidarme
 // puedo hacer que solo se haga una compra si no existe el lead con el
 //  producto relacionado en notas
