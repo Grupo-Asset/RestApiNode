@@ -9,6 +9,10 @@ export class UserController {
       const usuarios = await UserModel.getAll();
       res.json(usuarios)
     }
+    static async getUser(req,res){
+      const usuario = await UserModel.getUser(req.params.id)
+      res.json(usuario)
+    }
 
     static async login (req, res) {
       try {
@@ -68,13 +72,22 @@ export class UserController {
 
     static async update(req,res){
       try {
-        const userId = req.params.id;
-        const userChanges = req.body;3
-        const validation = validatePartialUser(userChanges)
-        const result = await UserModel.update(userId, userChanges);
-        res.status(result.status).send(result.message);
+        const validation = validatePartialUser(req.body)
+        console.log(validation)
+        //falta testear
+        if(validation.success){
+        console.log(req.params)
+        const result = await UserModel.update(req.params.id, req.body);
+        if(await result){
+          res.status(result.status).send(result);
+        } else {
+          res.status(400).send("error")
+        }
+        }else {
+          res.status(400).json({ error: JSON.parse(validation.error.message) });
+        }
       } catch(error){
-        res.status(500).send({error:error.message})
+        res.status(501).send({error:error.message})
       }
     }
   

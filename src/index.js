@@ -51,8 +51,11 @@ import getDolarRouter from './routes/getDolar.js';
 import getDolarV2Router from './routes/getDolarV2.js';
 import getDolarV3Router from './routes/getDolarV3.js';
 import postFacturaRouter from './routes/PostFactura.js';
+import { inventoryRouter } from './routes/inventory.js';
 import { userRouter } from './routes/users.js';
 import { UserModel } from './models/user.js';
+import { PurchaseOrderModel } from './models/purchaseOrder.js';
+import { FacturaModel } from './models/factura.js';
 //routes
 //routes
 //routes
@@ -61,6 +64,8 @@ app.use('/routes/Register', registerRouter);
 app.use('/v1/getall', getAllRouter);
 app.use('/v1/venta', postFacturaRouter); // Actualizada a la ruta correcta
 app.use('/user', userRouter )
+app.use('/inventory', inventoryRouter)
+
 
 //GET
 app.use(loginRouter);
@@ -76,8 +81,11 @@ app.use(getDolarV3Router);
 
 // Starting
 // Inicializar el modelo de usuario
+
 UserModel.init().then(() => {
-    console.log('UserModel initialized');
+    PurchaseOrderModel.init();
+    FacturaModel.init();
+    console.log('All models initialized');
 })
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

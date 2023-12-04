@@ -79,43 +79,43 @@ async createSubscription() {
         return subscription.data;
         }
 
-        async getFactura(req) {
-            try {
-                console.log("\n\n\n\n\n\nn\n\n\n\n\n\n", req.query);
-                const options = {
-                method: 'GET',
-                url: `https://api.holded.com/api/invoicing/v1/documents/invoice/${req.query.id}`,
-                headers: { accept: 'application/json', key: 'c1e86f21bcc5fdedc6c36bd30cb5b596' }
-                };
-                
-                const factura = await axios.request(options);
-                console.log("\n\n\n\nn\\n\n\n\n, Factura response", factura.data);
-            
-                return { status: "FACTURA 📄🤖BIP BOP", error: false, info: factura.data };
-            } catch (error) {
-                console.error(error);
-                
-                if (error.response) {
-                // Si hay una respuesta de error del servidor
-                const errorMessage = error.response.data.message;
-                const statusCode = error.response.status;
-                
-                return {
-                    status: `Error en la obtención de factura: ${statusCode}`,
-                        error: true,
-                    info: error.code,
-                    extra: "olso its possible invoice not found :)"
-                };
-                } else {
-                // Si ocurre algún otro tipo de error
-                return {
-                    status: "Error en la obtención de factura",
-                    error: true,
-                    info: error.message
-                };
-                }
-            }
-            }//perdon se me esta zafando la chiripiorka por que quedan 24 horas para terminar esta wea
+async getFactura(req) {
+    try {
+        console.log("\n\n\n\n\n\nn\n\n\n\n\n\n", req.query);
+        const options = {
+        method: 'GET',
+        url: `https://api.holded.com/api/invoicing/v1/documents/invoice/${req.query.id}`,
+        headers: { accept: 'application/json', key: 'c1e86f21bcc5fdedc6c36bd30cb5b596' }
+        };
+        
+        const factura = await axios.request(options);
+        console.log("\n\n\n\nn\\n\n\n\n, Factura response", factura.data);
+    
+        return { status: "FACTURA 📄🤖BIP BOP", error: false, info: factura.data };
+    } catch (error) {
+        console.error(error);
+        
+        if (error.response) {
+        // Si hay una respuesta de error del servidor
+        const errorMessage = error.response.data.message;
+        const statusCode = error.response.status;
+        
+        return {
+            status: `Error en la obtención de factura: ${statusCode}`,
+                error: true,
+            info: error.code,
+            extra: "olso its possible invoice not found :)"
+        };
+        } else {
+        // Si ocurre algún otro tipo de error
+        return {
+            status: "Error en la obtención de factura",
+            error: true,
+            info: error.message
+        };
+        }
+    }
+    }//perdon se me esta zafando la chiripiorka por que quedan 24 horas para terminar esta wea
 //y me quedan 24 horas paraa el segundo parcial de analisis matematico II
 //para el cual no estudie en todoa la semana para terminar esta wea
 //🥴😵‍💫

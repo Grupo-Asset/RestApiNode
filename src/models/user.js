@@ -79,6 +79,7 @@ export class UserModel {
         headers: {
             accept: 'application/json',
             'content-type': 'application/json',
+            key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
         },
         data: {
             name: nombre,
@@ -102,11 +103,17 @@ export class UserModel {
         throw err;
     }
     }
+    static async getUser(id){
+        const user = userList.find((contact) => contact.id === id);
+        return user
+    }
+
 
     static async update(id, cambios) {
         try {
+            // console.log(userList[0])
             const user = userList.find((contact) => contact.id === id);
-    
+            // console.log(user)
             if (!user) {
                 return { status: 404, message: 'Usuario no encontrado' };
             }
@@ -124,43 +131,16 @@ export class UserModel {
                 headers: {
                     accept: 'application/json',
                     'content-type': 'application/json',
+                    key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
                 },
-                data: {
-                    name: usuario.name,
-                    socialNetworks: {
-                        website: usuario.password,
-                    },
-                    mobile: usuario.mobile,
-                    iban: usuario.fechaNac,
-                    swift: usuario.genero,
-                    defaults: {
-                        language: usuario.lang,
-                    },
-                    billAddress: {
-                        address: usuario.address && usuario.address.address_components && usuario.address.address_components[1] ?
-                            usuario.address.address_components[1].long_name + ' ' + usuario.address.address_components[0].long_name :
-                            usuario.address && usuario.address.address,
-                        city: usuario.address && usuario.address.address_components && usuario.address.address_components[3] ?
-                            usuario.address.address_components[3].long_name :
-                            usuario.address && usuario.address.city,
-                        postalCode: usuario.address && usuario.address.address_components && usuario.address.address_components[6] ?
-                            usuario.address.address_components[6].long_name :
-                            usuario.address && usuario.address.postalCode,
-                        province: usuario.address && usuario.address.address_components && usuario.address.address_components[4] ?
-                            usuario.address.address_components[4].long_name :
-                            usuario.address && usuario.address.province,
-                        country: usuario.address && usuario.address.address_components && usuario.address.address_components[5] ?
-                            usuario.address.address_components[5].long_name :
-                            usuario.address && usuario.address.country,
-                    },
-                },
+                data: usuario,
             };
     
             const response = await axios(options);
     
             console.log(response.data);
     
-            if (response.status === 201) {
+            if (response.status === 200) {
                 return { status: 201, message: 'Contacto actualizado con éxito👌👍' };
             } else {
                 throw new Error('Error al actualizar el contacto');
