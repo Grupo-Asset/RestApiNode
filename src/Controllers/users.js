@@ -61,10 +61,17 @@ export class UserController {
       }
     }
 
+    static async getById(req,res){
+      const result = await UserModel.getById(req.params.id);
+      res.status(200).send(result)
+    }
+
     static async update(req,res){
       try {
-        const validation = validatePartialUser(req.body)
-        const result = await UserModel.update(req.body);
+        const userId = req.params.id;
+        const userChanges = req.body;3
+        const validation = validatePartialUser(userChanges)
+        const result = await UserModel.update(userId, userChanges);
         res.status(result.status).send(result.message);
       } catch(error){
         res.status(500).send({error:error.message})

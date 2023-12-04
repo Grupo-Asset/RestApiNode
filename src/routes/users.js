@@ -4,6 +4,8 @@ import { UserController } from '../Controllers/users.js'
 export const userRouter = Router()
 
 userRouter.get('/', UserController.getAll)
+userRouter.get('/:id', UserController.getById)
 userRouter.post('/login', UserController.login)
 userRouter.post('/register',UserController.register)
-// userRouter.patch('/:id',UserController.edit)
+userRouter.patch('/:id',UserController.update)
+
