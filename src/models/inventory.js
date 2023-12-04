@@ -1,6 +1,6 @@
 import axios from 'axios'
 
-export class InventoryModel {
+export default class InventoryModel {
 
   static async getAllProducts() {
     try {
@@ -17,7 +17,7 @@ export class InventoryModel {
 
         if (response.status === 200) {
             const data = response.data;
-
+            console.log(data)
             const listaProductos = [];
 
             for (const producto of data) {
@@ -47,7 +47,8 @@ export class InventoryModel {
             const options = {
               method: 'GET',
               url: 'https://api.holded.com/api/invoicing/v1/services',
-              headers: { accept: 'application/json' }
+              headers: { accept: 'application/json',
+              key: 'c1e86f21bcc5fdedc6c36bd30cb5b596' }
             };
         
             const response = await axios.request(options);

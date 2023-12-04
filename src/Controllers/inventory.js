@@ -1,4 +1,4 @@
-import { InventoryModel } from "../models/inventory.js";
+import  InventoryModel  from "../models/inventory.js";
 export class InventoryController {
     constructor(){
         if (InventoryController.instance){
@@ -7,10 +7,22 @@ export class InventoryController {
         InventoryController.instance = this;
         this.inventoryModel = new InventoryModel();
     }
+    static async help(req,res){
+        return res.status(200).json( {
+            products: {
+                endPoint: "/products",
+                function: "getAllProducts"
+            },
+            services:{
+                endPoint:"/services",
+                function: "getAllServices"
+            }
+        })
+    }
 
    static async getAllProducts(req,res){
         try{
-            const products = await this.inventoryModel.getAllProducts()
+            const products = await InventoryModel.getAllProducts()
             return res.json(products)
         }catch(error) {
             console.log("error inventory controller, error:", error);
@@ -26,7 +38,7 @@ export class InventoryController {
     
    static async getAllServices(req,res){
         try{
-            const products = await this.inventoryModel.getAllServices()
+            const products = await InventoryModel.getAllServices()
             return res.json(products)
         }catch(error) {
             console.log("error inventory controller, error:", error);
