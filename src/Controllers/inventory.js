@@ -1,15 +1,16 @@
-class InventoryController {
+import { InventoryModel } from "../models/inventory.js";
+export class InventoryController {
     constructor(){
         if (InventoryController.instance){
             return InventoryController.instance;
         }
         InventoryController.instance = this;
-        inventoryModel = new InventoryModel();
+        this.inventoryModel = new InventoryModel();
     }
 
-    async getAllProducts(req,res){
+   static async getAllProducts(req,res){
         try{
-            const products = await inventoryModel.getAllProducts()
+            const products = await this.inventoryModel.getAllProducts()
             return res.json(products)
         }catch(error) {
             console.log("error inventory controller, error:", error);
@@ -23,9 +24,9 @@ class InventoryController {
         }
     }
     
-    async getAllServices(req,res){
+   static async getAllServices(req,res){
         try{
-            const products = await inventoryModel.getAllServices()
+            const products = await this.inventoryModel.getAllServices()
             return res.json(products)
         }catch(error) {
             console.log("error inventory controller, error:", error);

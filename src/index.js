@@ -51,6 +51,7 @@ import getDolarRouter from './routes/getDolar.js';
 import getDolarV2Router from './routes/getDolarV2.js';
 import getDolarV3Router from './routes/getDolarV3.js';
 import postFacturaRouter from './routes/PostFactura.js';
+import { inventoryRouter } from './routes/inventory.js';
 import { userRouter } from './routes/users.js';
 import { UserModel } from './models/user.js';
 import { PurchaseOrderModel } from './models/purchaseOrder.js';
