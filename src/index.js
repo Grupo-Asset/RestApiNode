@@ -2,12 +2,15 @@ import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
 import mercadopago from 'mercadopago';
-// import sdk from '@holded/v1.0#3cm531nlbw08qsz';  
-// const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
-import ventaRouter from './routes/PostFactura.js';
-import numeral from 'numeral';
 import path from 'path';
 import axios from 'axios';
+// import sdk from '@holded/v1.0#3cm531nlbw08qsz';  
+// const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+
+
+
+import ventaRouter from './routes/PostFactura.js';
+import numeral from 'numeral';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const transfer = '';
@@ -50,6 +53,7 @@ import { UserModel } from './models/user.js'; // lo usa apra el init, la verdad 
 import { PurchaseOrderModel } from './models/purchaseOrder.js';
 import { FacturaModel } from './models/factura.js';
 import { funnelRouter } from './routes/funnel.js';
+import { paymentRouter } from './routes/payments.js';
 //routes
 //routes
 //routes
@@ -60,6 +64,8 @@ app.use('/v1/getall',   getAllRouter);
 app.use('/v1/venta',    postFacturaRouter); // Actualizada a la ruta correcta
 app.use('/user',        userRouter )
 app.use('/inventory',   inventoryRouter)
+app.use('/payment',     paymentRouter)
+
 
 
 //GET
@@ -76,6 +82,11 @@ app.use(getDolarV3Router);
 
 // Starting
 // Inicializar el modelo de usuario
+
+// import UserController  from './Controllers/users.js';
+// const userInstance = new UserController();
+// userInstance.init()
+
 import PaymentController from './Controllers/PaymentController.js';
 import PaymentService from './Services/PaymentService.js';
 const PaymentInstance = new PaymentController(new PaymentService());
@@ -84,14 +95,15 @@ import {FunnelController} from './Controllers/FunnelController.js';
 import FunnelService from './Services/FunnelService.js';
 const FunnelInstance = new FunnelController(new FunnelService());
 
+PurchaseOrderModel.init();
+FacturaModel.init();
 UserModel.init().then(() => {
-    PurchaseOrderModel.init();
-    FacturaModel.init();
     console.log('All models initialized');
+    console.log(UserModel.getAll())
 })
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
-});
+}); 
 
 // Handling error if the port is already in use
 server.on('error', (error) => {

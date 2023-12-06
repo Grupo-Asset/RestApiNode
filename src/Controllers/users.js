@@ -2,10 +2,29 @@ import { UserModel } from "../models/user.js";
 import { FacturaModel } from "../models/factura.js";
 import { PurchaseOrderModel } from "../models/purchaseOrder.js";
 import { validateUser , validatePartialUser } from "../Services/user.js";
+import { InventoryController } from "./inventory.js";
 
-export class UserController {
+export default class UserController {
+    // constructor(){
+    //   if (InventoryController.instance){
+    //     return InventoryController.instance
+    //   }
+    //   InventoryController.instance = this;
+    //   this._model = new UserModel();
+    //   this.init()
+    // }
+
+      async init(){
+      if(this._model){
+        this._model.init();
+        console.log("model initialized")
+      }else{
+        console.log("model error")
+      }
+    }
+    
   
-    static async getAll (req, res) {
+   async getAll (req, res) {
       const usuarios = await UserModel.getAll();
       res.json(usuarios)
     }
@@ -22,7 +41,9 @@ export class UserController {
         //falta testear
         if(validation.success){
         const userDTO = await UserModel.getUser(email, password);
-        const { facturasDeUser, productsOwn, servicesOwn } = await FacturaModel.processFacturas(userDTO.id);
+        console.log("en contrller",userDTO)
+        console.log(await UserModel.getUser(email, password))
+        const { facturasDeUser, productsOwn, servicesOwn } = await FacturaModel.processFacturas(await userDTO.id);
         userDTO.facturasDeUser = facturasDeUser;
         userDTO.productsOwn = productsOwn;
         userDTO.servicesOwn = servicesOwn;

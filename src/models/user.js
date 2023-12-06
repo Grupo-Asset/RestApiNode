@@ -27,11 +27,21 @@ try {
 
 export class UserModel {
 
+    // constructor(){
+    //     if(UserModel.instance){
+    //         return UserModel.instance;
+    //     }
+    //     UserModel.instance = this;
+    //     this.userList = userList;
+
+    // }
+
     static async init() {
     await init();
     }
 
     static async getAll(){
+        console.log("llego al modelo")
     return userList;
     }
 
@@ -40,16 +50,18 @@ export class UserModel {
     }
 
     static async getUser(email, password){
+        console.log("antes del find.")
     const user = userList.find(
         (contact) => 
         contact.email === email && 
         String(contact.socialNetworks?.website) === String(password)
     );
+    console.log("despues de find")
+    console.log(user)
 
     if (!user) {
         throw new Error('Usuario no encontrado');
     }
-
     const userDTO = {
         name: user.name,
         email: user.email,

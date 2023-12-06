@@ -1,9 +1,9 @@
-class PaymentController {
+export class PaymentController {
     constructor(paymentServcice) {
         this.paymentServcice = paymentServcice;
     }
 
-    async getPaymentLink(req, res) {
+   static async getPaymentLink(req, res) {
         try{
             const payment = await this.paymentServcice.createPayment(req);
             console.log('\n\n\n\n\n\n\n\n\n\n PAYMENT.data QUE DEVOLVIO MP AL CREATEPREFERENCE\n',payment)
@@ -21,7 +21,7 @@ class PaymentController {
         }
     }
     
-    async getSubscriptionLink(req, res) {
+    static async getSubscriptionLink(req, res) {
         try{
             const subscription = await this.paymentServcice.createSubscription();
 
@@ -39,7 +39,7 @@ class PaymentController {
     }
 
 
-    async getDatosFactura(req, res) {
+    static async getDatosFactura(req, res) {
         try{
             const factura = await this.paymentServcice.getFactura(req);
 
@@ -57,7 +57,7 @@ class PaymentController {
         }
     }
 
-    async payInvoice(req, res) {
+    static async payInvoice(req, res) {
         try {
         const factura = await this.paymentServcice.payInvoice(req);
     
@@ -73,7 +73,7 @@ class PaymentController {
         }
     }
     
-    async updateInvoice(req, res) {
+    static async updateInvoice(req, res) {
         try {
         const factura = await this.paymentServcice.updateInvoice(req);
     
