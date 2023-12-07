@@ -14,17 +14,9 @@ export default class UserController {
     //   this.init()
     // }
 
-      async init(){
-      if(this._model){
-        this._model.init();
-        console.log("model initialized")
-      }else{
-        console.log("model error")
-      }
-    }
-    
+
   
-   async getAll (req, res) {
+   static async getAll (req, res) {
       const usuarios = await UserModel.getAll();
       res.json(usuarios)
     }

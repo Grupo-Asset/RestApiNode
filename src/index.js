@@ -99,7 +99,7 @@ PurchaseOrderModel.init();
 FacturaModel.init();
 UserModel.init().then(() => {
     console.log('All models initialized');
-    console.log(UserModel.getAll())
+    // console.log(UserModel.getAll())
 })
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);
