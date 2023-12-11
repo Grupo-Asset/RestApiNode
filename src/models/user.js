@@ -15,7 +15,7 @@ try {
     const response = await axios.request(options);
 
     if (response.status === 200) {
-        // console.log(response.data);
+        console.log("init funcino");
         userList = response.data;
     } else {
         console.error(`Error: ${response.status}`);
@@ -37,6 +37,8 @@ export class UserModel {
     // }
 
     static async init() {
+        console.log("init funcino");
+
     await init();
     }
 
@@ -46,21 +48,21 @@ export class UserModel {
     }
 
     static async getById(id){
-        return userList.find((contact) => contact.id = id)
+        return userList.find((contact) => contact.id === id)
     }
 
-    static async getUser(email, password){
-        console.log("antes del find.")
+    static async hijoDeRemilPuta(email, password){
+        console.log("antes del find.", userList)
+        console.log({email,password})
     const user = userList.find(
         (contact) => 
         contact.email === email && 
-        String(contact.socialNetworks?.website) === String(password)
+        contact.socialNetworks.website  === password
     );
-    console.log("despues de find")
-    console.log(user)
+   
 
     if (!user) {
-        throw new Error('Usuario no encontrado');
+        return 'Usuario no encontrado';
     }
     const userDTO = {
         name: user.name,

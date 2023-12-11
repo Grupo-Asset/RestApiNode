@@ -97,9 +97,10 @@ const FunnelInstance = new FunnelController(new FunnelService());
 
 PurchaseOrderModel.init();
 FacturaModel.init();
-UserModel.init().then(() => {
+UserModel.init().then(async () => {
     console.log('All models initialized');
-    // console.log(UserModel.getAll())
+
+    // console.log(await UserModel.test())
 })
 const server = app.listen(PORT, () => {
     console.log(`Server listening on port ${PORT}`);

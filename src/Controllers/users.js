@@ -27,14 +27,17 @@ export default class UserController {
 
     static async login (req, res) {
       try {
+        
         const { email, password } = req.body;
         const validation = validatePartialUser(req.body)
         console.log(validation)
         //falta testear
         if(validation.success){
-        const userDTO = await UserModel.getUser(email, password);
+        const userDTO = await UserModel.hijoDeRemilPuta(email, password);
         console.log("en contrller",userDTO)
-        console.log(await UserModel.getUser(email, password))
+        if (userDTO === null || userDTO === undefined) {
+          res.status(401).json({ error: 'Usuario no encontrado' });
+      }
         const { facturasDeUser, productsOwn, servicesOwn } = await FacturaModel.processFacturas(await userDTO.id);
         userDTO.facturasDeUser = facturasDeUser;
         userDTO.productsOwn = productsOwn;
