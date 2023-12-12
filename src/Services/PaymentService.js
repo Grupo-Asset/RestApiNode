@@ -146,6 +146,20 @@ async payInvoice(req) {
         console.error(error);
     }
 }
+
+async getDolarByPage(page) {
+    if (page === 'bcra') {
+        const dolarBCRA = Bcra.getDolar();
+        
+    } else if (page === 'dolarHoy') {
+        const dolarHoy = DolarHoy.getDolarHoy();
+        
+    } else {
+        const dolar = Ambito.getDolar();
+        
+    }
+}
+
 }
 
 
