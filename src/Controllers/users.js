@@ -31,6 +31,7 @@ export default class UserController {
         const { email, password } = req.body;
         const validation = validatePartialUser(req.body)
         console.log(validation)
+        console.log('validation',validation.error)
         //falta testear
         if(validation.success){
         const userDTO = await UserModel.hijoDeRemilPuta(email, password);
@@ -59,26 +60,35 @@ export default class UserController {
 
     static async register(req, res) {
       try {
+        console.log('req',req.body)
         const validation = validateUser(req.body)
-        console.log(validation)
+        console.log("validation result:",validation)
+        // console.log("validation error:",validation.error)
         //falta testear
         if(validation.success){
         const result = await UserModel.register(req.body);
         res.status(result.status).send(result.message);
         } else {
-          res.status(400).json({ error: JSON.parse(validation.error.message) });
+          res.status(400).json({ error: validation.error.issues, message: 'Faltan datos requeridos o son inválidos' });
         }
       }catch (error) {
+        let statusCode = 500;
+        let errorMessage = 'Error desconocido';
+  
         if (error.message === 'Usuario no encontrado') {
-          res.status(404).send({ error: 'Usuario no encontrado' });
+          statusCode = 404;
+          errorMessage = 'Usuario no encontrado';
         } else if (error.message === 'Faltan datos requeridos') {
-          res.status(400).send({ error: 'Faltan datos requeridos' });
+          statusCode = 400;
+          errorMessage = 'Faltan datos requeridos';
         } else if (error.message === 'Error al crear el contacto') {
-          res.status(500).send({ error: 'Error al crear el contacto' });
-        } else {
-          res.status(500).send({ error: 'Error desconocido' });
+          statusCode = 500;
+          errorMessage = 'Error al crear el contacto';
         }
+  
+        res.status(statusCode).send({ error: errorMessage });
       }
+    
     }
 
     static async getById(req,res){

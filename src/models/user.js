@@ -137,7 +137,7 @@ export class UserModel {
                 ...cambios
             };
     
-            console.log(usuario);
+            console.log('user populado',usuario);
     
             const options = {
                 method: 'PUT',
