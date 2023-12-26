@@ -30,7 +30,13 @@ app.get("/", function (req, res) {
 app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: (origin, callback) => {
+        const ACCEPTED_ORIGINS = [
+            'http://localhost:3000',
+            
+        ]
+    }}));
 
 // Routes
 import testRouter from './routes/test.js';
