@@ -29,6 +29,7 @@ export default class UserController {
       try {
         
         const { email, password } = req.body;
+        console.log(req.body)
         const validation = validatePartialUser(req.body)
         console.log(validation)
         console.log('validation',validation.error)

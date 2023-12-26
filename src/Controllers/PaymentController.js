@@ -1,11 +1,31 @@
 export class PaymentController {
-    constructor(paymentServcice) {
-        this.paymentServcice = paymentServcice;
+    static paymentService;
+
+    constructor(paymentService) {
+        PaymentController.paymentService = paymentService;
     }
 
-   static async getPaymentLink(req, res) {
+    static async getDolar(req,res){
+        const dolarInfo = await PaymentController.paymentService.getDolarByPage(req.query.page)
+        res.status(200).json(dolarInfo)
+    }
+    
+    static async help(req, res) {
+        let serviceStatus = "error";
+        if (PaymentController.paymentService.test()) {
+            serviceStatus = "initialized";
+        } else {
+            serviceStatus = "error";
+        }
+        return res.status(200).json({
+            help: "this is more like a test",
+            status: serviceStatus
+        });
+    }
+    
+    static async getPaymentLink(req, res) {
         try{
-            const payment = await this.paymentServcice.createPayment(req);
+            const payment = await PaymentController.paymentService.createPayment(req);
             console.log('\n\n\n\n\n\n\n\n\n\n PAYMENT.data QUE DEVOLVIO MP AL CREATEPREFERENCE\n',payment)
             return res.json(payment); 
 
@@ -23,7 +43,7 @@ export class PaymentController {
     
     static async getSubscriptionLink(req, res) {
         try{
-            const subscription = await this.paymentServcice.createSubscription();
+            const subscription = await PaymentController.paymentService.createSubscription();
 
             return res.json(subscription);
         }catch(error) {
@@ -38,10 +58,9 @@ export class PaymentController {
         }
     }
 
-
     static async getDatosFactura(req, res) {
         try{
-            const factura = await this.paymentServcice.getFactura(req);
+            const factura = await PaymentController.paymentService.getFactura(req);
 
             return res.json(factura);
         }catch(error) {
@@ -59,7 +78,7 @@ export class PaymentController {
 
     static async payInvoice(req, res) {
         try {
-        const factura = await this.paymentServcice.payInvoice(req);
+        const factura = await PaymentController.paymentService.payInvoice(req);
     
         return res.json(factura);
         } catch (error) {
@@ -75,7 +94,7 @@ export class PaymentController {
     
     static async updateInvoice(req, res) {
         try {
-        const factura = await this.paymentServcice.updateInvoice(req);
+        const factura = await PaymentController.paymentService.updateInvoice(req);
     
         return res.json(factura);
         } catch (error) {

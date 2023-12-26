@@ -23,7 +23,8 @@ export class InventoryController {
    static async getAllProducts(req,res){
         try{
             const products = await InventoryModel.getAllProducts()
-            return res.json(products)
+            const date = new Date()
+            return res.json({date: date, data: products});
         }catch(error) {
             console.log("error inventory controller, error:", error);
 
@@ -39,7 +40,8 @@ export class InventoryController {
    static async getAllServices(req,res){
         try{
             const products = await InventoryModel.getAllServices()
-            return res.json(products)
+            const date = new Date()
+            return res.json({date: date, data: products});
         }catch(error) {
             console.log("error inventory controller, error:", error);
 

@@ -5,6 +5,8 @@ export const paymentRouter = Router()
 
 
 //aca podria hacer PaymentControllerInstance = new PaymentController pero no hacer aflta por que son metodos async, si eventualmente requiere se peude
+paymentRouter.get('/dolar', PaymentController.getDolar)
+paymentRouter.get('/help', PaymentController.help)
 paymentRouter.get('/paymentLink', PaymentController.getPaymentLink)
 paymentRouter.get('/suscriptionLink',PaymentController.getSubscriptionLink)
 paymentRouter.get('/datosFactura', PaymentController.getDatosFactura)

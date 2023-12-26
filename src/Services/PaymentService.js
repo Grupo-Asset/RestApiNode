@@ -1,6 +1,8 @@
 import axios from 'axios';
-
+import { Bcra, DolarHoy, Ambito } from '../models/dolar.js'
 class PaymentService {
+
+    test(){return true}
     
     async createPayment(req) {
     const url = "https://api.mercadopago.com/checkout/preferences";;
@@ -48,8 +50,7 @@ class PaymentService {
     return payment.data;
     }
 
-
-async createSubscription() {
+    async createSubscription() {
     const url = "https://api.mercadopago.com/preapproval";
 
     const body = {
@@ -77,9 +78,9 @@ async createSubscription() {
     });
 
         return subscription.data;
-        }
+    }
 
-async getFactura(req) {
+    async getFactura(req) {
     try {
         console.log("\n\n\n\n\n\nn\n\n\n\n\n\n", req.query);
         const options = {
@@ -121,7 +122,7 @@ async getFactura(req) {
 //🥴😵‍💫
 
 
-async payInvoice(req) {
+    async payInvoice(req) {
     const fechaUnix = Math.floor(new Date().getTime() / 1000);
 
     const options = {
@@ -145,23 +146,21 @@ async payInvoice(req) {
     } catch (error) {
         console.error(error);
     }
-}
+    }
 
-async getDolarByPage(page) {
+    async getDolarByPage(page) {
     if (page === 'bcra') {
         const dolarBCRA = Bcra.getDolar();
-        
+        return dolarBCRA
     } else if (page === 'dolarHoy') {
         const dolarHoy = DolarHoy.getDolarHoy();
-        
+        return dolarHoy
     } else {
-        const dolar = Ambito.getDolar();
-        
+        const dolarAmbito = Ambito.getDolar();
+        return dolarAmbito
     }
-}
+    }
 
 }
-
-
 
 export default PaymentService;
