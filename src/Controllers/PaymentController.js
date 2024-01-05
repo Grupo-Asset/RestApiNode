@@ -76,6 +76,28 @@ export class PaymentController {
         }
     }
 
+    static async getDocumentPDF(req, res){
+        try{
+            if (!req.query.doctype || !req.query.id) {
+                return res.status(400).json({
+                    error: true,
+                    message: "doctype and id are required"
+                });
+            }
+            const pdf = await PaymentController.paymentService.getDocumentPDF(req.query.doctype ,req.query.id)
+            return res.status(200).send(pdf)
+        }catch(error){
+            console.error("error in controller",error)
+            return res.status(500).json(
+                {
+                    error: true,
+                    message: `Failed to create payment from controller: ${error.message}`
+                }
+            )
+        }
+    }
+    
+
     static async payInvoice(req, res) {
         try {
         const factura = await PaymentController.paymentService.payInvoice(req);

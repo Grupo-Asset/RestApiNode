@@ -1,11 +1,13 @@
+
 export class FunnelController {
+    static funnelModel;
     constructor(funnelModel){
-        this.funnelModel = funnelModel;
+        FunnelController.funnelModel = funnelModel;
     }
 
     static async getFunnel(){
         try{
-            const funnel = await this.funnelModel.getFunnel();
+            const funnel = await FunnelController.funnelModel.getFunnel();
 
             return funnel;
         }catch(error){
@@ -16,7 +18,7 @@ export class FunnelController {
 
    static async postUser(req,res){
         try{
-            const suscription = await this.funnelModel.postUser(req);
+            const suscription = await FunnelController.funnelModel.postUser(req);
             return res.status(200).json(suscription);
         }catch(error) {
             console.log("error suscription controller", error);

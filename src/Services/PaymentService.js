@@ -161,6 +161,25 @@ class PaymentService {
     }
     }
 
+    async getDocumentPDF(doctype, id){
+        try{
+           const response = await axios.request({
+             method: 'GET',
+             url: `https://api.holded.com/api/invoicing/v1/documents/${doctype}/${id}/pdf`,
+             headers: {accept: 'application/json', key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'}
+           })
+           if (response.status === 200) {
+             return response
+           } else {
+             return {error: true, status: response.status}
+           }
+        } catch (err) {
+         console.error(err);
+         return {error: true, message: err.message};
+         }
+     }
+     
+
 }
 
 export default PaymentService;
