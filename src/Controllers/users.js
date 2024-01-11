@@ -106,7 +106,8 @@ export default class UserController {
         console.log(req.params)
         const result = await UserModel.update(req.params.id, req.body);
         if(await result){
-          res.status(result.status).send(result);
+          console.log("result in controller:",result)
+          res.status(200).send(result);
         } else {
           res.status(400).send("error")
         }

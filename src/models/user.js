@@ -123,38 +123,99 @@ export class UserModel {
     }
 
 
-    static async update(id, cambios) {
+    static async update(id, usuario) {
         try {
             // console.log(userList[0])
-            const user = userList.find((contact) => contact.id === id);
-            // console.log(user)
-            if (!user) {
-                return { status: 404, message: 'Usuario no encontrado' };
+            // const user = userList.find((contact) => contact.id === id);
+            // // console.log(user)
+            // if (!user) {
+            //     return { status: 404, message: 'Usuario no encontrado' };
+            // }
+            // console.log('user ',user);
+            // console.log();
+            // console.log();
+            // console.log();
+            // console.log();
+            // console.log();
+            // console.log();
+            // console.log('cambios ',cambios);
+
+            // const usuario = {
+            //     ...user,
+            //     ...cambios
+            // };
+    
+            console.log();
+            console.log();
+            console.log();
+            console.log();
+            console.log();
+            console.log();
+            console.log('usuario con cambios:',usuario);
+            // // console.log('user populado',JSON.stringify(usuario));
+
+    
+            // const options = {
+            //     method: 'PUT',
+            //     url: `https://api.holded.com/api/invoicing/v1/contacts/${usuario.id}`,
+            //     headers: {
+            //         accept: 'application/json',
+            //         'content-type': 'application/json',
+            //         key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+            //     },
+            //     data: usuario,
+            // };
+            const usuarioActualizado=  {
+                name: usuario.name,
+                socialNetworks: {
+                    website: usuario.password,
+                },
+                mobile: usuario.mobile,
+                iban: usuario.fechaNac,
+                swift: usuario.genero,
+                defaults: {
+                    language: usuario.lang,
+                },
+                billAddress: {
+                    address: usuario.address.address_components && usuario.address.address_components[1] ?
+                        usuario.address.address_components[1].long_name + ' ' + usuario.address.address_components[0].long_name :
+                        usuario.address.address,
+                    city: usuario.address.address_components && usuario.address.address_components[3] ?
+                        usuario.address.address_components[3].long_name :
+                        usuario.address.city,
+                    postalCode: usuario.address.address_components && usuario.address.address_components[6] ?
+                        usuario.address.address_components[6].long_name :
+                        usuario.address.postalCode,
+                    province: usuario.address.address_components && usuario.address.address_components[4] ?
+                        usuario.address.address_components[4].long_name :
+                        usuario.address.province,
+                    country: usuario.address.address_components && usuario.address.address_components[5] ?
+                        usuario.address.address_components[5].long_name :
+                        usuario.address.country,
+                },
             }
-    
-            const usuario = {
-                ...user,
-                ...cambios
-            };
-    
-            console.log('user populado',usuario);
-    
             const options = {
                 method: 'PUT',
-                url: `https://api.holded.com/api/invoicing/v1/contacts/${usuario.id}`,
+                url: `https://api.holded.com/api/invoicing/v1/contacts/${id}`,
                 headers: {
-                    accept: 'application/json',
-                    'content-type': 'application/json',
-                    key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
-                },
-                data: usuario,
+                        accept: 'application/json',
+                        'content-type': 'application/json',
+                        key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+                    },
+                data:usuarioActualizado,
             };
+            console.log("data a holded:",options.data)
     
             const response = await axios(options);
     
             console.log(response.data);
     
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 1) {
+                const indice = userList.findIndex(usr => ( usr.id === id));
+                if (indice !== -1) userList[indice] = {...userList[indice], ...usuarioActualizado}
+                // userList = userList.map(usr =>(usr.id === id ? usuarioActualizado : usr))
+                
+                // console.log("user list actualizada", userList[0])
                 return { status: 201, message: 'Contacto actualizado con éxito👌👍' };
             } else {
                 throw new Error('Error al actualizar el contacto');
