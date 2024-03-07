@@ -37,7 +37,7 @@ export default class UserController {
         if(validation.success){
         const userDTO = await UserModel.hijoDeRemilPuta(email, password);
         console.log("en contrller",userDTO)
-        if (userDTO === null || userDTO === undefined) {
+        if (userDTO === null || userDTO === undefined|| userDTO === 'Usuario no encontrado'  ) {
           res.status(401).json({ error: 'Usuario no encontrado' });
       }
         const { facturasDeUser, productsOwn, servicesOwn } = await FacturaModel.processFacturas(await userDTO.id);
@@ -52,6 +52,7 @@ export default class UserController {
       } catch (error) {
         console.error(error);
         if (error.message === 'Usuario no encontrado') {
+          console.log("entro por el error")
           res.status(401).json({ error: 'Usuario no encontrado' });
         } else {
           res.status(500).json({ error: 'Error interno del servidor' });

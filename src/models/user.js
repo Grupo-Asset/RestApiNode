@@ -62,7 +62,7 @@ export class UserModel {
    
 
     if (!user) {
-        return 'Usuario no encontrado';
+        throw new Error( 'Usuario no encontrado');
     }
     const userDTO = {
         name: user.name,

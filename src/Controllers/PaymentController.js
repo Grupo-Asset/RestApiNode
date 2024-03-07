@@ -1,3 +1,4 @@
+import mercadopago from "mercadopago";
 export class PaymentController {
     static paymentService;
 
@@ -128,6 +129,69 @@ export class PaymentController {
             info: "pago realizado pero no impactado"
         });
         }
+    }
+
+    static async mpCreateOrder(req, res) {
+        try{
+            let items= [];
+
+
+            //lote
+            items.push({
+                title: "req.body.description",
+                unit_price: 1234,
+                quantity: 1,
+            });
+        
+        
+            // tax
+            if(req.body.tax){
+                items.push({
+                    title: "Tax",
+                    unit_price: Number((req.body.amount*req.body.tax)),
+                    quantity: 1,
+            
+                })
+                
+            }
+        
+            let preference = {
+                items: items,
+                back_urls: {
+                    "success": "http://localhost:8080/feedback",
+                    "failure": "http://localhost:8080/feedback",
+                    "pending": "http://localhost:8080/feedback"
+                },
+                notification_url: " https://018b-186-132-136-37.ngrok-free.app/payment/webhook",
+                auto_return: "approved",//approved, all deberia ser automatico
+                // notification_url: "http://localhost:3000/feedback",
+            };
+            
+            const result = await mercadopago.preferences.create(preference);
+    console.log(result);
+    res.send({ ok: "ok" });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      error: true,
+      message: "Error creating MercadoPago preference",
+    });
+  }
+}
+    
+    static async mpWebHook(req, res){
+        console.log(req.query);
+        res.status(204)
+    }
+
+    static async mpSuccess(req,res){
+
+    }
+    static async mpFailure(req,res){
+        
+    }
+    static async mpPending(req,res){
+        
     }
 
 }

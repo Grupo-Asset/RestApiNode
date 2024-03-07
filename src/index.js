@@ -65,7 +65,7 @@ import { UserModel } from './models/user.js'; // lo usa apra el init, la verdad 
 import { PurchaseOrderModel } from './models/purchaseOrder.js';
 import { FacturaModel } from './models/factura.js';
 import { funnelRouter } from './routes/funnel.js';
-import { paymentRouter } from './routes/payments.js';
+import { paymentRouter } from './routes/payments.routes.js';
 //routes
 //routes
 //routes
