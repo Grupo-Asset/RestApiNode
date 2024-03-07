@@ -31,9 +31,9 @@ class PaymentService {
 	let preference = {
 		items: items,
 		back_urls: {
-			"success": "https://prod-testing-development.up.railway.app//feedback",
-			"failure": "https://prod-testing-development.up.railway.app//feedback",
-			"pending": "https://prod-testing-development.up.railway.app//feedback"
+			"success": "https://prod-testing-development.up.railway.app/feedback",
+			"failure": "https://prod-testing-development.up.railway.app/feedback",
+			"pending": "https://prod-testing-development.up.railway.app/feedback"
 		},
         notification_url: " https://1057-186-132-136-37.ngrok-free.app/payment/webhook",
 		auto_return: "approved",//approved, all deberia ser automatico

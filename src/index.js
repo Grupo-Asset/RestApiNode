@@ -162,9 +162,9 @@ app.post("/create_preference", (req, res) => {
     let preference = {
         items: items,
         back_urls: {
-            "success": `https://prod-testing-development.up.railway.app//${req.body.backURL}`,
-            "failure": `https://prod-testing-development.up.railway.app//${req.body.backURL}`,
-            "pending": `https://prod-testing-development.up.railway.app//${req.body.backURL}`,
+            "success": `https://prod-testing-development.up.railway.app/${req.body.backURL}`,
+            "failure": `https://prod-testing-development.up.railway.app/${req.body.backURL}`,
+            "pending": `https://prod-testing-development.up.railway.app/${req.body.backURL}`,
         },
         auto_return: "approved",
     };

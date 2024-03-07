@@ -158,11 +158,11 @@ export class PaymentController {
             let preference = {
                 items: items,
                 back_urls: {
-                    "success": "https://prod-testing-development.up.railway.app//feedback",
-                    "failure": "https://prod-testing-development.up.railway.app//feedback",
-                    "pending": "https://prod-testing-development.up.railway.app//feedback"
+                    "success": "https://prod-testing-development.up.railway.app/feedback",
+                    "failure": "https://prod-testing-development.up.railway.app/feedback",
+                    "pending": "https://prod-testing-development.up.railway.app/feedback"
                 },
-                notification_url: "https://prod-testing-development.up.railway.app//payment/webhook",
+                notification_url: "https://prod-testing-development.up.railway.app/payment/webhook",
                 auto_return: "approved",//approved, all deberia ser automatico
                 // notification_url: "http://localhost:3000/feedback",
             };
