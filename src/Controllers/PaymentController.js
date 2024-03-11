@@ -158,7 +158,7 @@ export class PaymentController {
             let preference = {
                 items: items,
                 back_urls: {
-                    "success": "https://prod-testing-development.up.railway.app/feedback",
+                    "success": "https://prod-testing-development.up.railway.app",
                     "failure": "https://prod-testing-development.up.railway.app/feedback",
                     "pending": "https://prod-testing-development.up.railway.app/feedback"
                 },
