@@ -169,7 +169,7 @@ export class PaymentController {
             
             const result = await mercadopago.preferences.create(preference);
     console.log(result);
-    res.send({ ok: "ok" });
+    res.json(result.body);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -180,8 +180,21 @@ export class PaymentController {
 }
     
     static async mpWebHook(req, res){
-        console.log(req.query);
-        res.status(204)
+        const payment = req.query;
+        
+        try {
+            if(payment.type === "payment"){
+            const data = await mercadopago.payment.findById(payment['data.id'])
+            console.log(data);
+            //aca deberia crearce la factura
+            //o buscar una existente y agregarle el pago
+            res.status(204)
+            }
+        }catch (error){
+            console.log(error)
+            return res.status(500).json({error: "error"})
+        }
+
     }
 
     static async mpSuccess(req,res){
