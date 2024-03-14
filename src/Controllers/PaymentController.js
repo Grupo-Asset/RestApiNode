@@ -1,4 +1,5 @@
 import mercadopago from "mercadopago";
+import * as config from "../config";
 export class PaymentController {
     static paymentService;
 
@@ -158,11 +159,11 @@ export class PaymentController {
             let preference = {
                 items: items,
                 back_urls: {
-                    "success": "https://prod-testing-development.up.railway.app",
-                    "failure": "https://prod-testing-development.up.railway.app/feedback",
-                    "pending": "https://prod-testing-development.up.railway.app/feedback"
+                    "success": `${config.HOST}`,
+                    "failure": `${config.HOST}/feedback`,
+                    "pending": `${config.HOST}/feedback`
                 },
-                notification_url: "https://prod-testing-development.up.railway.app/payment/webhook",
+                notification_url: `${config.HOST}/payment/webhook`,
                 auto_return: "approved",//approved, all deberia ser automatico
                 // notification_url: "http://localhost:3000/feedback",
             };
@@ -198,13 +199,13 @@ export class PaymentController {
     }
 
     static async mpSuccess(req,res){
-        
+      res.redirect("http://localhost:3000/?status=${req.query.status}");
     }
     static async mpFailure(req,res){
-        
+      res.redirect("http://localhost:3000/?status=${req.query.status}");  
     }
     static async mpPending(req,res){
-        
+      res.redirect("http://localhost:3000/?status=${req.query.status}");   
     }
 
     static async ppCreateOrder(req, res){
@@ -236,15 +237,15 @@ export class PaymentController {
             const {
               data: { access_token },
             } = await axios.post(
-              "https://api-m.sandbox.paypal.com/v1/oauth2/token",
+              `${config.HOST}/v1/oauth2/token`,
               params,
               {
                 headers: {
                   "Content-Type": "application/x-www-form-urlencoded",
                 },
                 auth: {
-                  username: PAYPAL_API_CLIENT,
-                  password: PAYPAL_API_SECRET,
+                  username: config.PAYPAL_API_CLIENT,
+                  password: config.PAYPAL_API_SECRET,
                 },
               }
             );
@@ -253,7 +254,7 @@ export class PaymentController {
         
             // make a request
             const response = await axios.post(
-              `${PAYPAL_API}/v2/checkout/orders`,
+              `${config.PAYPAL_API}/v2/checkout/orders`,
               order,
               {
                 headers: {
