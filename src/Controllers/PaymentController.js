@@ -1,5 +1,5 @@
 import mercadopago from "mercadopago";
-import * as config from "../config";
+import * as config from "../config.js";
 export class PaymentController {
     static paymentService;
 
