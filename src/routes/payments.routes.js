@@ -22,10 +22,15 @@ paymentRouter.post('/payInvoice',PaymentController.payInvoice)
 paymentRouter.patch('/updateInvoice',PaymentController.updateInvoice)
 
 // Mercado Pago intento pro con webhook 
-paymentRouter.post('/create-order', PaymentController.mpCreateOrder)
+paymentRouter.post('/create-order-meli', PaymentController.mpCreateOrder)
 paymentRouter.post('/webhook', PaymentController.mpWebHook)
 paymentRouter.get('/success', PaymentController.mpSuccess)
 paymentRouter.get('/failure', PaymentController.mpFailure)
 paymentRouter.get('/pending', PaymentController.mpPending)
 
 // userRouter.patch('/:id',PaymentController.edit)
+//PayPal 
+paymentRouter.post('/create-order-paypal', PaymentController.ppCreateOrder)
+paymentRouter.get("/capture-order", PaymentController.ppCaptureOrder);
+paymentRouter.get("/cancel-order", PaymentController.ppCancelPayment);
+
