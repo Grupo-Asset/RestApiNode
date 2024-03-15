@@ -1,5 +1,6 @@
 import mercadopago from "mercadopago";
 import * as config from "../config.js";
+import axios from 'axios';
 export class PaymentController {
     static paymentService;
 
@@ -99,7 +100,6 @@ export class PaymentController {
         }
     }
     
-
     static async payInvoice(req, res) {
         try {
         const factura = await PaymentController.paymentService.payInvoice(req);
@@ -201,9 +201,11 @@ export class PaymentController {
     static async mpSuccess(req,res){
       res.redirect("http://localhost:3000/?status=${req.query.status}");
     }
+
     static async mpFailure(req,res){
       res.redirect("http://localhost:3000/?status=${req.query.status}");  
     }
+
     static async mpPending(req,res){
       res.redirect("http://localhost:3000/?status=${req.query.status}");   
     }
@@ -224,8 +226,8 @@ export class PaymentController {
                 brand_name: "mycompany.com",
                 landing_page: "NO_PREFERENCE",
                 user_action: "PAY_NOW",
-                return_url: `${HOST}/capture-order`,
-                cancel_url: `${HOST}/cancel-payment`,
+                return_url: `${config.HOST}/capture-order`,
+                cancel_url: `${config.HOST}/cancel-payment`,
               },
             };
         
@@ -237,7 +239,7 @@ export class PaymentController {
             const {
               data: { access_token },
             } = await axios.post(
-              `${config.HOST}/v1/oauth2/token`,
+              `https://api-m.sandbox.paypal.com/v1/oauth2/token`,
               params,
               {
                 headers: {
@@ -250,7 +252,7 @@ export class PaymentController {
               }
             );
         
-            console.log(access_token);
+            console.log(await access_token);
         
             // make a request
             const response = await axios.post(
@@ -268,7 +270,7 @@ export class PaymentController {
             return res.json(response.data);
           } catch (error) {
             console.log(error);
-            return res.status(500).json("Something goes wrong");
+            return res.status(500).json("Something goes wrong. catching error");
           }
     }
     static async ppCaptureOrder(req, res){
