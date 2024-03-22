@@ -144,7 +144,7 @@ export class PaymentController {
     static async mpCreateOrder(req, res){
         try{
             let items= [];
-          
+            let notification_url;
 
             //lote
             items.push({
