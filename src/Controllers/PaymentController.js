@@ -1,10 +1,12 @@
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import * as config from "../config.js";
 import axios from 'axios';
+
 export class PaymentController {
+
     static paymentService;
 
-    constructor(paymentService) {
+    constructor(paymentService){
         PaymentController.paymentService = paymentService;
     }
 
@@ -13,7 +15,7 @@ export class PaymentController {
         res.status(200).json(dolarInfo)
     }
     
-    static async help(req, res) {
+    static async help(req, res){
         let serviceStatus = "error";
         if (PaymentController.paymentService.test()) {
             serviceStatus = "initialized";
@@ -26,7 +28,7 @@ export class PaymentController {
         });
     }
     
-    static async getPaymentLink(req, res) {
+    static async getPaymentLink(req, res){
         try{
             const payment = await PaymentController.paymentService.createPayment(req);
             console.log('\n\n\n\n\n\n\n\n\n\n PAYMENT.data QUE DEVOLVIO MP AL CREATEPREFERENCE\n',payment)
@@ -44,7 +46,7 @@ export class PaymentController {
         }
     }
     
-    static async getSubscriptionLink(req, res) {
+    static async getSubscriptionLink(req, res){
         try{
             const subscription = await PaymentController.paymentService.createSubscription();
 
@@ -61,7 +63,7 @@ export class PaymentController {
         }
     }
 
-    static async getDatosFactura(req, res) {
+    static async getDatosFactura(req, res){
         try{
             const factura = await PaymentController.paymentService.getFactura(req);
 
@@ -99,7 +101,13 @@ export class PaymentController {
             )
         }
     }
-    
+    //para usar esta funcion payInvoice() se le debe pasar un objeto por 
+    //parametro que contenga el id de la fc, el monto a pagar,
+    //el nombre del producto, el id del usuario
+    //el tipo de financiacion
+    //una descripcion
+    //el valor del dolar
+    //
     static async payInvoice(req, res) {
         try {
         const factura = await PaymentController.paymentService.payInvoice(req);
@@ -116,7 +124,7 @@ export class PaymentController {
         }
     }
     
-    static async updateInvoice(req, res) {
+    static async updateInvoice(req, res){
         try {
         const factura = await PaymentController.paymentService.updateInvoice(req);
     
@@ -224,7 +232,7 @@ export class PaymentController {
       message: "Error creating MercadoPago preference",
     });
   }
-}
+    }
     
     static async mpWebHook(req, res){
           const APPROVED = "approved";
@@ -336,6 +344,7 @@ export class PaymentController {
             return res.status(500).json("Something goes wrong. catching error");
           }
     }
+
     static async ppCaptureOrder(req, res){
         const { token } = req.query;
 
@@ -359,9 +368,11 @@ export class PaymentController {
     return res.status(500).json({ message: "Internal Server error" });
   }
     }
+
     static async ppCancelPayment(req, res){
         res.redirect("/")
     }
 
 }
+
 export default PaymentController;
