@@ -1,4 +1,5 @@
-import mercadopago from "mercadopago";
+//import mercadopago from "mercadopago";
+import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import * as config from "../config.js";
 import axios from 'axios';
 export class PaymentController {
@@ -133,30 +134,77 @@ export class PaymentController {
     }
 
     static async mpCreateOrder(req, res) {
-        try{
-            let items= [];
+      const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+      const preference = new Preference(mpClient);
 
+      
+        try{
+            const purchasedItems= [];
 
             //lote
-            items.push({
-                title: "req.body.description",
-                unit_price: 1234,
+            purchasedItems.push({
+                title: req.body.description,
+                unit_price: req.body.amount,
                 quantity: 1,
+                description: "Lote en la ciudad de La Plata",
+                currency_id: "ARS",
             });
         
         
             // tax
             if(req.body.tax){
-                items.push({
-                    title: "Tax",
+              purchasedItems.push({
+                    title: "Producto con impuesto",
                     unit_price: Number((req.body.amount*req.body.tax)),
                     quantity: 1,
-            
+                    description: "Impuesto a la compra de la propiedad",
+                    currency_id: "ARS",            
                 })
                 
             }
+
+            await preference.create({
+              body: {
+                items: purchasedItems,
+                redirect_urls: {
+                  "success": `${config.HOST}`,
+                  "failure": `${config.HOST}/feedback`,
+                  "pending": `${config.HOST}/feedback`
+              },
+              back_urls: {
+                "success": `${config.HOST}`,
+                "failure": `${config.HOST}/feedback`,
+                "pending": `${config.HOST}/feedback`
+              },
+              notification_url: `${config.HOST}/payment/webhook`,
+              auto_return: "approved", 
+              additional_info: "Esta es info adicional",
+              external_reference: "Reference_1234",
+              payer: {
+                name: "Lalo",
+                surname: "Landa",
+                email: "lalo@landa.com",
+                phone: {
+                  area_code: "52",
+                  number: 5549737300
+                },
+                address: {
+                  street_name: "Insurgentes Sur",
+                  street_number: 1602,
+                  zip_code: "03940"
+                },                
+              },
+            }
+            })
+            .then(
+              (response) => {
+                console.log(response);
+                res.json({ "url": response.init_point, "sandbox_init_point": response.sandbox_init_point, response});
+              }
+            )
+            .catch(console.log);
         
-            let preference = {
+            /* let preference = {
                 items: items,
                 back_urls: {
                     "success": `${config.HOST}`,
@@ -164,13 +212,12 @@ export class PaymentController {
                     "pending": `${config.HOST}/feedback`
                 },
                 notification_url: `${config.HOST}/payment/webhook`,
-                auto_return: "approved",//approved, all deberia ser automatico
+                auto_return: "approved", 
+                //approved, all deberia ser automatico
                 // notification_url: "http://localhost:3000/feedback",
-            };
+            }; */
             
-            const result = await mercadopago.preferences.create(preference);
-    console.log(result);
-    res.json(result.body);
+            //const result = await mercadopago.preferences.create(preference);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -181,15 +228,22 @@ export class PaymentController {
 }
     
     static async mpWebHook(req, res){
-        const payment = req.query;
-        
-        try {
-            if(payment.type === "payment"){
-            const data = await mercadopago.payment.findById(payment['data.id'])
-            console.log(data);
-            //aca deberia crearce la factura
-            //o buscar una existente y agregarle el pago
-            res.status(204)
+          const receivedPayment = req.query;
+          console.log('receivedPayment', receivedPayment)
+          
+          try {
+              if (receivedPayment.type === "payment"){
+                const id = receivedPayment['data.id'];
+                const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+                const payment = new Payment(mpClient);
+                const data = await payment.get({id});
+                console.log(data);
+                //aca deberia crearce la factura
+                //o buscar una existente y agregarle el pago
+                res.json(data)
+            } else {
+                console.log(receivedPayment.type)
+                res.status(204).send();
             }
         }catch (error){
             console.log(error)

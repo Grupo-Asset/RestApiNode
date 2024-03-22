@@ -44,7 +44,7 @@ class PaymentService {
     const payment = await axios.post(url, preference, {
     headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MP_API_KEY}`
+        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
     }
     });
 
@@ -74,7 +74,7 @@ class PaymentService {
         headers: {
         "Content-Type": "application/json",
         "X-scope": "stage",
-        Authorization: `Bearer ${process.env.MP_API_KEY}`
+        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
         }
     });
 

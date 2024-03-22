@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const transfer = '';
 const app = express();
-const PORT = 8080;
+const PORT = 1337;
 import { config } from 'dotenv';
 config();
 
@@ -133,9 +133,9 @@ server.on('error', (error) => {
     });
 });
 
-mercadopago.configure({
+/* mercadopago.configure({
     access_token: "TEST-5990004718573364-050309-6f5ddb7d13b533596d97451683dcf03e-1365118455", // Access token for test user 1
-});               
+});  */              
 
 
 
