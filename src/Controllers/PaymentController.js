@@ -1,4 +1,3 @@
-//import mercadopago from "mercadopago";
 import { MercadoPagoConfig, Preference, Payment } from 'mercadopago';
 import * as config from "../config.js";
 import axios from 'axios';
@@ -136,23 +135,23 @@ export class PaymentController {
     static async mpCreateOrder(req, res) {
       const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
       const preference = new Preference(mpClient);
-
+      const {description, amount, tax, quantity, currency_id, title} = req.body;
       
         try{
             const purchasedItems= [];
 
             //lote
             purchasedItems.push({
-                title: req.body.description,
-                unit_price: req.body.amount,
-                quantity: 1,
-                description: "Lote en la ciudad de La Plata",
-                currency_id: "ARS",
+                title: title,
+                unit_price: amount,
+                quantity: quantity,
+                description: description,
+                currency_id: currency_id,
             });
         
         
             // tax
-            if(req.body.tax){
+            if(tax){
               purchasedItems.push({
                     title: "Producto con impuesto",
                     unit_price: Number((req.body.amount*req.body.tax)),
@@ -178,8 +177,8 @@ export class PaymentController {
               },
               notification_url: `${config.HOST}/payment/webhook`,
               auto_return: "approved", 
-              additional_info: "Esta es info adicional",
-              external_reference: "Reference_1234",
+              additional_info: JSON.stringify({invoiceId:"1234"}),
+              external_reference: JSON.stringify({invoiceId:"1234"}),
               payer: {
                 name: "Lalo",
                 surname: "Landa",
@@ -228,6 +227,8 @@ export class PaymentController {
 }
     
     static async mpWebHook(req, res){
+          const APPROVED = "approved";
+          const ACCREDITED = "accredited";
           const receivedPayment = req.query;
           console.log('receivedPayment', receivedPayment)
           
@@ -237,8 +238,16 @@ export class PaymentController {
                 const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
                 const payment = new Payment(mpClient);
                 const data = await payment.get({id});
+                const {status_detail, status} = data;
+                if (status == APPROVED) {
+                  console.log("pago aprobado");
+                }
+                if (status_detail == ACCREDITED) {
+                  //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
+                  console.log("pago acreditado");
+                }
                 console.log(data);
-                //aca deberia crearce la factura
+
                 //o buscar una existente y agregarle el pago
                 res.json(data)
             } else {
