@@ -1,5 +1,5 @@
 import axios from 'axios';
-// const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+
 
 
 class FunnelService {

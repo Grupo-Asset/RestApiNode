@@ -117,11 +117,7 @@ class PaymentService {
         };
         }
     }
-    }//perdon se me esta zafando la chiripiorka por que quedan 24 horas para terminar esta wea
-//y me quedan 24 horas paraa el segundo parcial de analisis matematico II
-//para el cual no estudie en todoa la semana para terminar esta wea
-//🥴😵‍💫
-
+    }
 
     async payInvoice(req) {
     const fechaUnix = Math.floor(new Date().getTime() / 1000);

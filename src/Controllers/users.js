@@ -5,14 +5,7 @@ import { validateUser , validatePartialUser } from "../Services/user.js";
 import { InventoryController } from "./inventory.js";
 
 export default class UserController {
-    // constructor(){
-    //   if (InventoryController.instance){
-    //     return InventoryController.instance
-    //   }
-    //   InventoryController.instance = this;
-    //   this._model = new UserModel();
-    //   this.init()
-    // }
+
 
 
   

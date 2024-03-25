@@ -66,10 +66,7 @@ import { PurchaseOrderModel } from './models/purchaseOrder.js';
 import { FacturaModel } from './models/factura.js';
 import { funnelRouter } from './routes/funnel.js';
 import { paymentRouter } from './routes/payments.routes.js';
-//routes
-//routes
-//routes
-// app.use('/routes/Register', registerRouter);
+
 app.use('/funnel',      funnelRouter)
 app.use('/routes/test', testRouter);
 app.use('/v1/getall',   getAllRouter);
@@ -79,25 +76,15 @@ app.use('/inventory',   inventoryRouter)
 app.use('/payment',     paymentRouter)
 
 
-//deploy errror (borrar )
-//GET
-// app.use(loginRouter);
-// app.use(loginV2Router);
-// app.use(getAllProductoRouter);
-// app.use(getAllServicioRouter);
+
 app.use(getAllFacturasRouter);
-// app.use(uptadeUserRouter);
+
 app.use(getFacturaPDFRouter);
 app.use(getDolarRouter);
 app.use(getDolarV2Router);
 app.use(getDolarV3Router);
 
-// Starting
-// Inicializar el modelo de usuario
 
-// import UserController  from './Controllers/users.js';
-// const userInstance = new UserController();
-// userInstance.init()
 
 import PaymentController from './Controllers/PaymentController.js';
 import PaymentService from './Services/PaymentService.js';

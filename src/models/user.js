@@ -27,14 +27,6 @@ try {
 
 export class UserModel {
 
-    // constructor(){
-    //     if(UserModel.instance){
-    //         return UserModel.instance;
-    //     }
-    //     UserModel.instance = this;
-    //     this.userList = userList;
-
-    // }
 
     static async init() {
         console.log("init funcino");
@@ -125,46 +117,11 @@ export class UserModel {
 
     static async update(id, usuario) {
         try {
-            // console.log(userList[0])
-            // const user = userList.find((contact) => contact.id === id);
-            // // console.log(user)
-            // if (!user) {
-            //     return { status: 404, message: 'Usuario no encontrado' };
-            // }
-            // console.log('user ',user);
-            // console.log();
-            // console.log();
-            // console.log();
-            // console.log();
-            // console.log();
-            // console.log();
-            // console.log('cambios ',cambios);
-
-            // const usuario = {
-            //     ...user,
-            //     ...cambios
-            // };
-    
-            console.log();
-            console.log();
-            console.log();
-            console.log();
-            console.log();
-            console.log();
+     
             console.log('usuario con cambios:',usuario);
             // // console.log('user populado',JSON.stringify(usuario));
 
-    
-            // const options = {
-            //     method: 'PUT',
-            //     url: `https://api.holded.com/api/invoicing/v1/contacts/${usuario.id}`,
-            //     headers: {
-            //         accept: 'application/json',
-            //         'content-type': 'application/json',
-            //         key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
-            //     },
-            //     data: usuario,
-            // };
+
             const usuarioActualizado=  {
                 name: usuario.name,
                 socialNetworks: {
