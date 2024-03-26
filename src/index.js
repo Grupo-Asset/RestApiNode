@@ -15,7 +15,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 const transfer = '';
 const app = express();
-const PORT = 1337;
+const PORT = 8080;
 import { config } from 'dotenv';
 config();
 
