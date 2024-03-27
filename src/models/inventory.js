@@ -17,7 +17,7 @@ export default class InventoryModel {
 
         if (response.status === 200) {
             const data = response.data;
-            console.log(data)
+            // console.log(data)
             const listaProductos = [];
 
             for (const producto of data) {

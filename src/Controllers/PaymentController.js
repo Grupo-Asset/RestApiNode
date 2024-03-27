@@ -12,7 +12,8 @@ export class PaymentController {
 
     static async getDolar(req,res){
         const dolarInfo = await PaymentController.paymentService.getDolarByPage(req.query.page)
-        res.status(200).json(dolarInfo)
+        console.log("el dolar llego al controlador con el valor ",await dolarInfo)
+        res.status(201).json(await dolarInfo)
     }
     
     static async help(req, res){
