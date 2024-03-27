@@ -1,10 +1,10 @@
 import {Router} from 'express'
 import {InventoryController} from '../Controllers/inventory.js'
-
+//inventory
 export const inventoryRouter = Router()
 const inventoryController = new InventoryController();
 
-inventoryRouter.get('/products', InventoryController.getAllProducts)
+inventoryRouter.get('/products', InventoryController.getProducts)
 inventoryRouter.get('/help', InventoryController.help)
 // inventoryRouter.get('/products/:id',inventoryController.getProduct)
 inventoryRouter.get('/services', InventoryController.getAllServices)

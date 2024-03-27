@@ -72,4 +72,55 @@ export default class InventoryModel {
             return {error:true}
           }
     }
+
+    static async getProductsByProject(projectId) {
+      try {
+          const options = {
+              method: 'GET',
+              url: 'https://api.holded.com/api/invoicing/v1/products',
+              headers: {
+                  accept: 'application/json',
+                  key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+              }
+          };
+  
+          const response = await axios.request(options);
+  
+          if (response.status === 200) {
+              const {data} = response;
+              const listaProductos = [];
+  
+              for (const producto of data) {
+                  if (producto.attributes[0].id === projectId) {
+                      const productoReducido = {
+                          id: producto.id,
+                          name: producto.name,
+                          price: producto.price,
+                          total: producto.total,
+                          hasStock: producto.hasStock,
+                          stock: producto.stock,
+                          sku: producto.sku,
+                          proyectId: producto.attributes[0].id
+                      };
+                      listaProductos.push(productoReducido);
+                  }
+              }
+  
+              return listaProductos;
+          } else {
+              console.error(`Error: ${response.status}`);
+              return { error: true, status: response.status };
+          }
+      } catch (err) {
+          if (axios.isAxiosError(err)) {
+              console.error('Error de red:', err.code);
+              return { error: true, info: err.message };
+          } else {
+              console.error('Otro tipo de error:', err);
+              return { error: true, info: err.stack };
+          }
+      }
+  }
+  
+  
 }

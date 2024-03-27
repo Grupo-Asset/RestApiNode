@@ -20,11 +20,41 @@ export class InventoryController {
         })
     }
 
-   static async getAllProducts(req,res){
+    static async getProducts(req,res){
         try{
-            const products = await InventoryModel.getAllProducts()
-            const date = new Date()
-            return res.json({date: date, data: products});
+            const {proyectId} = req.query
+            if(proyectId){
+                try{
+                    const products = await InventoryModel.getProductsByProject(proyectId)
+                    const date = new Date()
+                    return res.json({date: date, data: products});
+                }catch(error) {
+                    console.log("error inventory controller, error:", error);
+        
+                    return res.status(500).json(
+                        {
+                            error: true,
+                            message: "Failed in server"
+                        }
+                    )
+                }
+            }else{
+                try{
+                    const products = await InventoryModel.getAllProducts()
+                    const date = new Date()
+                    return res.json({date: date, data: products});
+                }catch(error) {
+                    console.log("error inventory controller, error:", error);
+        
+                    return res.status(500).json(
+                        {
+                            error: true,
+                            message: "Failed in server"
+                        }
+                    )
+                }
+            }
+           
         }catch(error) {
             console.log("error inventory controller, error:", error);
 
@@ -37,6 +67,8 @@ export class InventoryController {
         }
     }
     
+
+
    static async getAllServices(req,res){
         try{
             const products = await InventoryModel.getAllServices()
