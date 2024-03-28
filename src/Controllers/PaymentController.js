@@ -268,14 +268,14 @@ export class PaymentController {
                 console.log(data);
 
                 //o buscar una existente y agregarle el pago
-                res.json(data)
+                res.json(data, req)
             } else {
                 console.log(receivedPayment.type)
-                res.status(204).send();
+                res.status(204).send(req);
             }
         }catch (error){
             console.log(error)
-            return res.status(500).json({error: "error"})
+            return res.status(500).json({error: "error", req:req})
         }
 
     }
