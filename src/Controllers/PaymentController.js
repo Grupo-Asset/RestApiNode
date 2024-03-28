@@ -204,7 +204,7 @@ export class PaymentController {
               },
               back_urls: {
                 "success": `${config.HOST}`,
-                "failure": `${config.HOST}/feedback`,
+                "failure": `${config.HOST}`,
                 "pending": `${config.HOST}/feedback`
               },
               notification_url: `${config.HOST}/payment/webhook`,
