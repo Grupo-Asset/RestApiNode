@@ -210,7 +210,7 @@ export class PaymentController {
               notification_url: `${config.HOST}/payment/webhook`,
               auto_return: "approved", 
               additional_info: JSON.stringify({invoiceId:"1234"}),
-              external_reference: JSON.stringify({product: product}),
+              external_reference: JSON.stringify({invo:"123",second:"perhaps?"}),
               
             }
             })
