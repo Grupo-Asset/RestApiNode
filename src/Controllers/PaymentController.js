@@ -239,7 +239,7 @@ export class PaymentController {
   } catch (error) {
     console.error(error);
     res.status(500).json({
-      error: true,
+      error: error,
       message: "Error creating MercadoPago preference",
     });
   }
