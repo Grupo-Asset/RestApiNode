@@ -210,7 +210,7 @@ export class PaymentController {
               notification_url: `${config.HOST}/payment/webhook`,
               auto_return: "approved", 
               additional_info: JSON.stringify({invoiceId:"1234"}),
-              external_reference: JSON.stringify({invoiceId:"1234"}),
+              external_reference: JSON.stringify(req.body),
               
             }
             })
@@ -260,18 +260,20 @@ export class PaymentController {
                 const {status_detail, status} = data;
                 if (status == APPROVED) {
                   console.log("pago aprobado");
+                  console.log(req.body)
                 }
                 if (status_detail == ACCREDITED) {
                   //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
                   console.log("pago acreditado");
                 }
                 console.log(data);
-
+                console.log(req.body)
                 //o buscar una existente y agregarle el pago
-                res.json(data, req)
+                res.json(data, req.body)
             } else {
                 console.log(receivedPayment.type)
-                res.status(204).send(req);
+                console.log(req.body)
+                res.status(204).send(req.body);
             }
         }catch (error){
             console.log(error)
