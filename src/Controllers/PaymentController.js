@@ -142,7 +142,7 @@ export class PaymentController {
     }
 
     static async mpCreateOrder(req, res) {
-      const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
+      const mpClient = new MercadoPagoConfig({ accessToken: config.MP_ACCESS_TOKEN });
       const preference = new Preference(mpClient);
       const {product, user, financiation, dolarValue, quantity} = req.body;
     //  product {
