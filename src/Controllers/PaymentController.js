@@ -261,14 +261,14 @@ export class PaymentController {
                 const {status_detail, status} = data;
                 if (status == APPROVED) {
                   console.log("pago aprobado");
-                  console.log(req.body)
+                  // console.log(req.body)
                 }
                 if (status_detail == ACCREDITED) {
                   //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
                   console.log("pago acreditado");
                 }
                 console.log(data);
-                console.log(req)
+                // console.log(req)
                 //o buscar una existente y agregarle el pago
                 res.json(data, req.body)
             } else {
