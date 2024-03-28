@@ -267,12 +267,12 @@ export class PaymentController {
                   console.log("pago acreditado");
                 }
                 console.log(data);
-                console.log(req.body)
+                console.log(req)
                 //o buscar una existente y agregarle el pago
                 res.json(data, req.body)
             } else {
                 console.log(receivedPayment.type)
-                console.log(req.body)
+                console.log(req)
                 res.status(204).send(req.body);
             }
         }catch (error){
