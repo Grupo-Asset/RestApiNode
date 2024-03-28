@@ -1,6 +1,6 @@
 import {Router} from 'express'
 import  {PaymentController}  from '../Controllers/PaymentController.js'
-
+//payment
 export const paymentRouter = Router()
 //explicacion de pagos, (al menos lo que me acuerdo sumando a lo que estoy por implementar xd)
 //dolar es el web scrapper de ambito financiero, help es para test y help xd, Links son de la primera 

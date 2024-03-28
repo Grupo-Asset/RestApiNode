@@ -144,15 +144,38 @@ export class PaymentController {
     static async mpCreateOrder(req, res) {
       const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
       const preference = new Preference(mpClient);
-      const {description, amount, tax, quantity, currency_id, title} = req.body;
-      
+      const {product, user, financiation, dolarValue, quantity} = req.body;
+    //  product {
+    //     "id": "644a876161a6585a540a672f",
+    //     "name": "Lote 1",
+    //     "price": 100,
+    //     "total": 121,
+    //     "hasStock": true,
+    //     "stock": 1,
+    //     "sku": "QF1-L1",
+    //     "proyectId": "644a8658a21b36b309050d7f"
+    // }
+  //   user{
+  //     name: user.name,
+  //     email: user.email,
+  //     mobile: user.mobile,
+  //     id: user.id,
+  //     password: String(user.socialNetworks?.website),
+  //     fechaNac: user.iban,
+  //     genero: user.swift,
+  //     lang: user.defaults.language,
+  //     address: user.billAddress
+  // }
+  // financiation: financiation type
+  // dolarValue: dolarValue
+  //quantity
         try{
             const purchasedItems= [];
 
             //lote
             purchasedItems.push({
-                title: title,
-                unit_price: amount,
+                title: product.name,
+                unit_price: product.price,
                 quantity: quantity,
                 description: description,
                 currency_id: currency_id,
@@ -160,10 +183,10 @@ export class PaymentController {
         
         
             // tax
-            if(tax){
+            if(product.price != product.total){
               purchasedItems.push({
                     title: "Producto con impuesto",
-                    unit_price: Number((req.body.amount*req.body.tax)),
+                    unit_price: Number((product.total-product.price)),
                     quantity: 1,
                     description: "Impuesto a la compra de la propiedad",
                     currency_id: "ARS",            
@@ -187,21 +210,8 @@ export class PaymentController {
               notification_url: `${config.HOST}/payment/webhook`,
               auto_return: "approved", 
               additional_info: JSON.stringify({invoiceId:"1234"}),
-              external_reference: JSON.stringify({invoiceId:"1234"}),
-              payer: {
-                name: "Lalo",
-                surname: "Landa",
-                email: "lalo@landa.com",
-                phone: {
-                  area_code: "52",
-                  number: 5549737300
-                },
-                address: {
-                  street_name: "Insurgentes Sur",
-                  street_number: 1602,
-                  zip_code: "03940"
-                },                
-              },
+              external_reference: JSON.stringify(req.body),
+              
             }
             })
             .then(
