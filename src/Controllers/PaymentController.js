@@ -267,14 +267,14 @@ export class PaymentController {
                   //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
                   console.log("pago acreditado");
                 }
-                console.log(data);
+                console.log(data.external_reference);
                 // console.log(req)
                 //o buscar una existente y agregarle el pago
-                res.json(data, req.body)
+                res.json(data)
             } else {
                 console.log(receivedPayment.type)
                 console.log(req)
-                res.status(204).send(req.body);
+                res.status(204).send();
             }
         }catch (error){
             console.log(error)
