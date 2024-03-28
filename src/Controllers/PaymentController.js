@@ -177,8 +177,8 @@ export class PaymentController {
                 title: product.name,
                 unit_price: product.price,
                 quantity: quantity,
-                description: description,
-                currency_id: currency_id,
+                description: "producto",
+                currency_id: "ars",
             });
         
         
