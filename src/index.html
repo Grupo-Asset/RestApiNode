@@ -63,18 +63,67 @@
 
 		<h2>Rutas</h2>
 		<ul>
-			<li><span>GET /v1/getAll</span>Trae todos los clientes</li>
-			<li><span>GET /v1/getAllFacturas</span>Trae todas las facturas</li>
-			<li><span>GET /v1/getAllProductos</span>Trae todos los productos</li>
-			<li><span>GET /v1/getAllServicios</span>Devuelve todos los servicios</li>
-			<li><span>GET /v1/login</span>Login v1</li>
-			<li><span>GET /v2/login</span>Login con DTO</li>
-			<li><span>GET /v1/mercadoPago</span>Conexión mercadoPago</li>
-			<li><span>POST /v1/postFacturas</span>Crea una nueva factura</li>
-			<li><span>POST /v1/register</span>Registra un usuario</li>
-			<li><span>GET /v1/test</span>Test</li>
-			<li><span>POST /v1/updateUser</span>recibe un usuario actualizado y lo envia</li>
-			<li><span>GET /v1/getFacturaPDF</span>Devuelve una factura en formato hex</li>
+			<li><span>/funel</span>rutas de inventario
+				<ul>
+					<li><span>Get</span>
+						<ul>
+							<li><span>/</span>postUser, params: funnelId, contactId, stageId</li>
+							
+						</ul>
+					</li>
+
+				</ul>
+			</li>
+			<li><span>/inventory</span>rutas de inventario
+				<ul>
+					<li><span>Get</span>
+						<ul>
+							<li><span>/products</span>getAll productos</li>
+							<li><span>/services</span>getAll servicios</li>
+							<li><span>/help</span>test</li>
+						</ul>
+					</li>
+					
+
+				</ul>
+			</li>
+			<li><span>/payment</span>rutas de inventario
+				<ul>
+					<li><span>Get</span>
+						<ul>
+							<li><span>/help</span></li>
+							<li><span>/dolar</span></li>
+							<li><span>/datosFactura</span></li>
+							<li><span>/document/:doctype/:id
+								
+							</ul>
+						</li>
+						<li><span>Post</span>
+							<ul>
+							<li><span>/create-order-meli</span>body:</li>
+							<li><span>/create-order-paypal</span></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			<li><span>/user</span>rutas de inventario
+				<ul>
+					<li><span>Get</span>
+						<ul>
+							<li><span>list1</span></li>
+							<li><span>list2</span></li>
+						</ul>
+					</li>
+					<li><span>Post</span>
+						<ul>
+							<li><span>list1</span></li>
+							<li><span>list2</span></li>
+						</ul>
+					</li>
+				</ul>
+			</li>
+			
+	
 		</ul>
 	</div>
 </body>

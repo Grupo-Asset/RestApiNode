@@ -238,6 +238,7 @@ export class PaymentController {
                 }
                 if (status_detail == ACCREDITED) {
                   if(external_reference.invoiceId){
+                    external_reference.transactionAmount= transactionAmount/external_reference.dolarValue;
                     //aca deberia crearse un recibo que es un purchaseOrder
                     //por ahora solo va a pagar el invoice y actualizar los customFields
                     PaymentController.paymentService.updateInvoice(external_reference);
@@ -394,7 +395,7 @@ export class PaymentController {
     );
 
     console.log(response.data);
-
+    let external_reference = response.data.purchase_units[0].reference_id
     if(external_reference.invoiceId){
       //aca deberia crearse un recibo que es un purchaseOrder
       //por ahora solo va a pagar el invoice y actualizar los customFields
