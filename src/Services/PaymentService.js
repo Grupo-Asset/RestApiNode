@@ -1,87 +1,132 @@
 import axios from 'axios';
 import { Bcra, DolarHoy, Ambito } from '../models/dolar.js'
+import numeral from 'numeral';
 class PaymentService {
 
     test(){return true}
     
-    async createPayment(req) {
-    const url = "https://api.mercadopago.com/checkout/preferences";;
-    let items= [];
 
+    async createInvoice(req){
 
-	//lote
-    items.push({
-		title: req.body.description,
-		unit_price: Number(req.body.amount),
-		quantity: 1,
-	});
+        const {userId, productSKU, financiation, dolarValue,transactionAmount,quantity} = req
+        const fechaUnix = Math.floor(new Date().getTime() / 1000);
+        console.log(userId)
+        console.log('userId:', userId);
+        console.log('productSKU:', productSKU);
+        const options = {
+            method: 'POST',
+            url: 'https://api.holded.com/api/invoicing/v1/documents/invoice',
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+            },
+            data: {
+                contactId: userId,
+                items: [{sku: productSKU, units: quantity?quantity:1, tax:21}],
+                customFields: [
+                    {
+                        "Financiacion": financiation,
+                        "Pago N": 1
+                    },
+                    {
+                        "Descripcion": (financiation == 'contado'?"1/2": '0/12'),
+                        "Fecha": new Date().toLocaleDateString()
+                    },
+                    {
+                        "Valor dolar": numeral(dolarValue).format('0,0.00'),
+                        "Pago en pesos": `ARS$${numeral(transactionAmount * 1.21).format('0.0,0')}`
+                    },
+                ],
+                date: fechaUnix
+            }
+          };
+          
+          return axios
+            .request(options)
+            .then(function (response) {
+              console.log("termino createInvoice en nais:",response);
+              return response 
+            })
+            .catch(function (error) {
 
+                console.error("termino createInvoice en error:",error);
+              return error
+            });
+        }
+    async updateInvoice(req){
+         const {info} = await this.getInvoice(req.invoiceId)
+         let cuota = parseInt(info.customFields[3].value)
+        switch (req.financiation){
+            case '100':
+                console.log();
+                break
+            case '70/30':
+                console.clear();
+                break
+            default:
+                console.log();
+                break
+            
+        }
+        //falta la forma de manejar el tema de la cantidad de cuotas y ya esta todo
+        const options = {
+            method: 'PUT',
+            url: `https://api.holded.com/api/invoicing/v1/documents/invoice/${req.invoiceId}`,
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+            },
+            data: {
+                customFields: [
+                    { field: 'Pago N', value: (cuota + 1) },
+                    { field: 'Pago en pesos', value: `ARS$${numeral(req.transactionAmount * 1.21).format('0.0,0')}` },
+                    {"Valor dolar": numeral(req.dolarValue).format('0,0.00'),}
+                ]
+            }
+          };
 
-	// tax
-    if(req.body.tax){
-        items.push({
-            title: "Tax",
-            unit_price: Number((req.body.amount*req.body.tax)),
-            quantity: 1,
-    
-        })
-        
+          return axios
+          .request(options)
+          .then(function (response) {
+            console.log(response.data);
+            return response 
+          })
+          .catch(function (error) {
+            console.error(error);
+            return error
+          });
+
     }
+    async payInvoice(req) {
+    const fechaUnix = Math.floor(new Date().getTime() / 1000);
 
-	let preference = {
-		items: items,
-		back_urls: {
-			"success": "https://prod-testing-development.up.railway.app/feedback",
-			"failure": "https://prod-testing-development.up.railway.app/feedback",
-			"pending": "https://prod-testing-development.up.railway.app/feedback"
-		},
-        notification_url: " https://1057-186-132-136-37.ngrok-free.app/payment/webhook",
-		auto_return: "approved",//approved, all deberia ser automatico
-		// notification_url: "http://localhost:3000/feedback",
-	};
-	console.log(preference)
-
-    const payment = await axios.post(url, preference, {
+    const options = {
+    method: 'POST',
+    url: `https://api.holded.com/api/invoicing/v1/documents/invoice/${req.invoiceId}/pay`,
     headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
+        accept: 'application/json',
+        'content-type': 'application/json',
+        key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+    },
+    data: {
+        date: fechaUnix,
+        amount: req.transactionAmount
     }
-    });
-
-    return payment.data;
-    }
-
-    async createSubscription() {
-    const url = "https://api.mercadopago.com/preapproval";
-
-    const body = {
-        "back_url": "https://www.google.com",
-        "reason": "Test Subscription",
-        "auto_recurring": {
-            "frequency": 1,
-            "frequency_type": "months",
-            "start_date": "2023-06-02T13:07:14.260Z",
-            "end_date": "2024-07-20T15:59:52.581Z",
-            "transaction_amount": 10,
-            "currency_id": "ARS"
-        },
-        "payer_email": "test_user_1721412825@testuser.com",
-        
-        "status": "authorized"
     };
 
-    const subscription = await axios.post(url, body, {
-        headers: {
-        "Content-Type": "application/json",
-        "X-scope": "stage",
-        Authorization: `Bearer ${process.env.MP_ACCESS_TOKEN}`
-        }
-    });
-
-        return subscription.data;
+    try {
+        const response = await axios.request(options);
+        console.log(response.data);
+        return response
+        //status 1 si funciono y 0 si hubo un problema
+    } catch (error) {
+        console.error(error);
+        return response
     }
-
-    async getFactura(req) {
+    }
+    async getInvoice(req) {
     try {
         console.log("\n\n\n\n\n\nn\n\n\n\n\n\n", req.query);
         const options = {
@@ -117,38 +162,7 @@ class PaymentService {
         };
         }
     }
-    }//perdon se me esta zafando la chiripiorka por que quedan 24 horas para terminar esta wea
-//y me quedan 24 horas paraa el segundo parcial de analisis matematico II
-//para el cual no estudie en todoa la semana para terminar esta wea
-//🥴😵‍💫
-
-
-    async payInvoice(req) {
-    const fechaUnix = Math.floor(new Date().getTime() / 1000);
-
-    const options = {
-    method: 'POST',
-    url: 'https://api.holded.com/api/invoicing/v1/documents/invoice/123/pay',
-    headers: {
-        accept: 'application/json',
-        'content-type': 'application/json',
-        key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
-    },
-    data: {
-        date: fechaUnix,
-        amount: req.body.amount
     }
-    };
-
-    try {
-        const response = await axios.request(options);
-        console.log(response.data);
-
-    } catch (error) {
-        console.error(error);
-    }
-    }
-
     async getDolarByPage(page) {
     if (page === 'bcra') {
         const dolarBCRA = Bcra.getDolar();
@@ -179,6 +193,48 @@ class PaymentService {
          return {error: true, message: err.message};
          }
      }
+
+     async createRecibe(req){
+        const {userId, productSKU, financiation, dolarValue,transactionAmount,quantity} = req
+        const fechaUnix = Math.floor(new Date().getTime() / 1000);
+        const options = {
+            method: 'POST',
+            url: 'https://api.holded.com/api/invoicing/v1/documents/purchaseorder',
+            headers: {
+              accept: 'application/json',
+              'content-type': 'application/json',
+              key: 'c1e86f21bcc5fdedc6c36bd30cb5b596'
+            },
+            data: {
+              contactId: userId,
+              items: [{sku: productSKU, units: quantity?quantity:1, tax:21}],
+              customFields: [
+                {
+                    "Financiacion": financiation,
+                },
+                {
+                    "Descripcion": (financiation == 'contado'?"1/2": '0/12'),
+                    "Fecha": new Date().toLocaleDateString(),
+                    "Valor dolar": numeral(dolarValue).format('0,0.00'),
+                    "Pago en pesos": `ARS$${numeral(transactionAmount * 1.21).format('0.0,0')}`
+                },
+            ],
+              date: fechaUnix
+            }
+          };
+          
+          return axios
+            .request(options)
+            .then(function (response) {
+
+              console.log('create recibe gud',response.data);
+              return response 
+            })
+            .catch(function (error) {
+              console.error(error);
+              return error
+            });
+        }
      
 
 }

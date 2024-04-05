@@ -66,7 +66,7 @@ export class PaymentController {
 
     static async getDatosFactura(req, res){
         try{
-            const factura = await PaymentController.paymentService.getFactura(req);
+            const factura = await PaymentController.paymentService.getInvoice(req);
 
             return res.json(factura);
         }catch(error) {
@@ -144,54 +144,43 @@ export class PaymentController {
     static async mpCreateOrder(req, res) {
       const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
       const preference = new Preference(mpClient);
-      const {product, user, financiation, dolarValue, quantity} = req.body;
-    //  product {
-    //     "id": "644a876161a6585a540a672f",
-    //     "name": "Lote 1",
-    //     "price": 100,
-    //     "total": 121,
-    //     "hasStock": true,
-    //     "stock": 1,
-    //     "sku": "QF1-L1",
-    //     "proyectId": "644a8658a21b36b309050d7f"
-    // }
-  //   user{
-  //     name: user.name,
-  //     email: user.email,
-  //     mobile: user.mobile,
-  //     id: user.id,
-  //     password: String(user.socialNetworks?.website),
-  //     fechaNac: user.iban,
-  //     genero: user.swift,
-  //     lang: user.defaults.language,
-  //     address: user.billAddress
-  // }
-  // financiation: financiation type
-  // dolarValue: dolarValue
-  //quantity
+      const {
+        product, 
+        user, 
+        financiation, 
+        dolarValue, 
+        quantity,
+        transactionAmount, 
+        invoiceId
+            } = req.body;
+
         try{
-            const purchasedItems= [];
+            let transfer= {
+              userId :            user.id,
+              dolarValue:         dolarValue,
+              transactionAmount:  transactionAmount,
+              financiation:       financiation
+
+            };
 
             //lote
-            purchasedItems.push({
-                title: product.name,
-                unit_price: product.price,
-                quantity: quantity,
-                description: "producto",
-                currency_id: "ARS",
-            });
+            const purchasedItems =[{
+                title:        product.name,
+                unit_price:   transactionAmount,
+                quantity:     quantity,
+                description:  "producto",
+                currency_id:  "ARS",
+            }];
         
-        
-            // tax
-            if(product.price != product.total){
-              purchasedItems.push({
-                    title: "Producto con impuesto",
-                    unit_price: Number((product.total-product.price)),
-                    quantity: 1,
-                    description: "Impuesto a la compra de la propiedad",
-                    currency_id: "ARS",            
-                })
-                
+            if(invoiceId){
+              transfer["invoiceId"]=  invoiceId;
+              //si es invoice podria ver cual es la factura y el plan de pago
+              //para determinar cuanto es el monto a pagar sin que lo mande el frotn
+            }else{
+              transfer["productSKU"]= product.sku;
+              transfer['quantity']=   quantity;
+              //caso contrario ver el precio del producto y pedir el 10% + IVA
+              //seria muy util que sea una funcion y que se pueda usar por endpoint
             }
 
             await preference.create({
@@ -207,36 +196,19 @@ export class PaymentController {
                 "failure": `${config.HOST}`,
                 "pending": `${config.HOST}/feedback`
               },
-              notification_url: `${config.HOST}/payment/webhook`,
-              auto_return: "approved", 
-              additional_info: JSON.stringify({invoiceId:"1234"}),
-              external_reference: JSON.stringify(
-                {productId: product.id,userId:user.id,financiation:financiation,dolarValue:dolarValue}),
-              
+              notification_url:   `https://0bc2-186-132-139-2.ngrok-free.app/payment/webhook`,
+              auto_return:        "approved", 
+              external_reference: JSON.stringify(transfer),
             }
             })
             .then(
               (response) => {
-                console.log(response);
-                res.json({ "url": response.init_point, "sandbox_init_point": response.sandbox_init_point, response});
+                console.log(response.init_point);
+                // res.json({ "url": response.init_point, "sandbox_init_point": response.sandbox_init_point, response});
+                res.json({ "url": response.init_point});
               }
             )
             .catch(console.log);
-        
-            /* let preference = {
-                items: items,
-                back_urls: {
-                    "success": `${config.HOST}`,
-                    "failure": `${config.HOST}/feedback`,
-                    "pending": `${config.HOST}/feedback`
-                },
-                notification_url: `${config.HOST}/payment/webhook`,
-                auto_return: "approved", 
-                //approved, all deberia ser automatico
-                // notification_url: "http://localhost:3000/feedback",
-            }; */
-            
-            //const result = await mercadopago.preferences.create(preference);
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -250,7 +222,7 @@ export class PaymentController {
           const APPROVED = "approved";
           const ACCREDITED = "accredited";
           const receivedPayment = req.query;
-          console.log('receivedPayment', receivedPayment)
+          // console.log('receivedPayment', receivedPayment)
           
           try {
               if (receivedPayment.type === "payment"){
@@ -258,12 +230,28 @@ export class PaymentController {
                 const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
                 const payment = new Payment(mpClient);
                 const data = await payment.get({id});
-                const {status_detail, status} = data;
+                const {status_detail, status, external_reference} = data;
+                external_reference = JSON.parse(external_reference) 
                 if (status == APPROVED) {
                   console.log("pago aprobado");
                   // console.log(req.body)
                 }
                 if (status_detail == ACCREDITED) {
+                  if(external_reference.invoiceId){
+                    //aca deberia crearse un recibo que es un purchaseOrder
+                    //por ahora solo va a pagar el invoice y actualizar los customFields
+                    PaymentController.paymentService.updateInvoice(external_reference);
+                    PaymentController.paymentService.payInvoice(external_reference);
+                    PaymentController.paymentService.createRecibe(external_reference);
+                  }else{
+                    //aca se va a crear el invoice y luego pagarlo
+                    PaymentController.paymentService.createRecibe(external_reference);
+                    PaymentController.paymentService.createInvoice(external_reference).then((res)=>{
+                      console.log(res)
+                    external_reference['invoiceId']= res.invoiceId
+                    PaymentController.paymentService.payInvoice(external_reference);
+                    })
+                  }
                   //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
                   console.log("pago acreditado");
                 }
@@ -273,7 +261,7 @@ export class PaymentController {
                 res.json(data)
             } else {
                 console.log(receivedPayment.type)
-                console.log(req)
+                // console.log(req)
                 res.status(204).send();
             }
         }catch (error){
@@ -375,6 +363,20 @@ export class PaymentController {
     );
 
     console.log(response.data);
+
+    if(external_reference.invoiceId){
+      //aca deberia crearse un recibo que es un purchaseOrder
+      //por ahora solo va a pagar el invoice y actualizar los customFields
+      this.paymentService.updateInvoice(external_reference.invoiceId);
+      this.paymentService.payInvoice(external_reference.invoiceId);
+      this.paymentService.createRecibe(external_reference);
+    }else{
+      //aca se va a crear el invoice y luego pagarlo
+      this.paymentService.createInvoice(external_reference).then((id)=>{
+        this.paymentService.payInvoice(id);
+      })
+      this.paymentService.createRecibe(external_reference);
+    }
 
     res.redirect("http://localhost:3000/?status=${req.query.status}");
   } catch (error) {
