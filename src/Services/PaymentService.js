@@ -35,7 +35,7 @@ class PaymentService {
                     },
                     {
                         "Valor dolar": numeral(dolarValue).format('0,0.00'),
-                        "Pago en pesos": `ARS$${numeral(transactionAmount * 1.21).format('0.0,0')}`
+                        "Pago en pesos": `ARS$${numeral(transactionAmount * 1.21* dolarValue).format('0.0,0')}`
                     },
                 ],
                 date: fechaUnix
