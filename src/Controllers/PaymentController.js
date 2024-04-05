@@ -196,7 +196,7 @@ export class PaymentController {
                 "failure": `${config.HOST}`,
                 "pending": `${config.HOST}/feedback`
               },
-              notification_url:   `https://0bc2-186-132-139-2.ngrok-free.app/payment/webhook`,
+              notification_url:   `https://edde-2803-9800-a142-8002-81ed-c2b-784f-e6d3.ngrok-free.app/payment/webhook`,
               auto_return:        "approved", 
               external_reference: JSON.stringify(transfer),
             }
@@ -230,7 +230,7 @@ export class PaymentController {
                 const mpClient = new MercadoPagoConfig({ accessToken: process.env.MP_ACCESS_TOKEN });
                 const payment = new Payment(mpClient);
                 const data = await payment.get({id});
-                const {status_detail, status, external_reference} = data;
+                let {status_detail, status, external_reference} = data;
                 external_reference = JSON.parse(external_reference) 
                 if (status == APPROVED) {
                   console.log("pago aprobado");
@@ -247,9 +247,9 @@ export class PaymentController {
                     //aca se va a crear el invoice y luego pagarlo
                     PaymentController.paymentService.createRecibe(external_reference);
                     PaymentController.paymentService.createInvoice(external_reference).then((res)=>{
-                      console.log(res)
-                    external_reference['invoiceId']= res.invoiceId
-                    PaymentController.paymentService.payInvoice(external_reference);
+                      console.log("res 250" ,res)
+                    external_reference['invoiceId']= res.id
+                    PaymentController.paymentService.payInvoice(external_reference)
                     })
                   }
                   //aca deberia generarse la factura, se puede usar external_reference para guardar el id de la factura de holded
@@ -284,14 +284,45 @@ export class PaymentController {
     }
 
     static async ppCreateOrder(req, res){
+      const {
+        product, 
+        user, 
+        financiation, 
+        dolarValue, 
+        quantity,
+        transactionAmount, 
+        invoiceId
+            } = req.body;
+
         try {
+
+          let transfer= {
+            userId :            user.id,
+            dolarValue:         dolarValue,
+            transactionAmount:  transactionAmount,
+            financiation:       financiation
+
+          };
+
+          if(invoiceId){
+            transfer["invoiceId"]=  invoiceId;
+            //si es invoice podria ver cual es la factura y el plan de pago
+            //para determinar cuanto es el monto a pagar sin que lo mande el frotn
+          }else{
+            transfer["productSKU"]= product.sku;
+            transfer['quantity']=   quantity;
+            //caso contrario ver el precio del producto y pedir el 10% + IVA
+            //seria muy util que sea una funcion y que se pueda usar por endpoint
+          }
+          
             const order = {
               intent: "CAPTURE",
               purchase_units: [
                 {
+                  reference_id: JSON.stringify(transfer),
                   amount: {
                     currency_code: "USD",
-                    value: "105.70",
+                    value: transactionAmount,
                   },
                 },
               ],
