@@ -1,10 +1,10 @@
 import axios from 'axios'
 import mondaySdk from "monday-sdk-js"
-
+import {MONDAY_APY_KEY} as config from "../config.js";
 export async function postConsulta(userDTO){
   const monday = mondaySdk();
   monday.setApiVersion("2024-01");
-  monday.setToken('eyJhbGciOiJIUzI1NiJ9.eyJ0aWQiOjI4MzUzMjQ4MSwiYWFpIjoxMSwidWlkIjo0NDQ4MzAzMCwiaWFkIjoiMjAyMy0wOS0yMVQxODo1OTo0Mi4wMDBaIiwicGVyIjoibWU6d3JpdGUiLCJhY3RpZCI6MTcyMTM5MDIsInJnbiI6InVzZTEifQ.44jWSoWM8S5yCvSi57Yzo49eex66RzxQwUx_6LSUEsU')
+  monday.setToken(`${config.MONDAY_APY_KEY}`)
     
   const {name,mail, telefono,consulta } = userDTO;
 
@@ -13,14 +13,15 @@ export async function postConsulta(userDTO){
       tel_fono__1:telefono,
       texto6__1 :consulta
   });
-
-    const query = `mutation{
-        create_item (board_id:"6342754164",item_name:"francisco",column_values:"{name:\"francisco\"texto0__1:"ghisonifran@gmail.com",tel_fono__1:"1123202551",texto6__1:"probando"}") {
-          id
-        }}`
-    const data = {
-      query:`mutation{create_item(board_id:6342754164,item_name:${name},column_values:"${column_values}"){id}}`
-    }
+//lo dejo por que se supone que deberia poder crear el item con sus respectivas columnas 
+//pero como solo se supone... [TODO]
+// const query = `mutation{
+//     create_item (board_id:"6342754164",item_name:"francisco",column_values:"{name:\"francisco\"texto0__1:"ghisonifran@gmail.com",tel_fono__1:"1123202551",texto6__1:"probando"}") {
+//       id
+//     }}`
+// const data = {
+//   query:`mutation{create_item(board_id:6342754164,item_name:${name},column_values:"${column_values}"){id}}`
+// }
     
 
   try {
