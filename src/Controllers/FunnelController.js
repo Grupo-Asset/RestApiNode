@@ -1,4 +1,4 @@
-
+import { postConsulta } from "../models/Monday/funnel.js";
 export class FunnelController {
     static funnelModel;
     constructor(funnelModel){
@@ -35,7 +35,16 @@ export class FunnelController {
         return res.status(200).json( {help : "this is more like a test"})
     }
 
-    
+    static async postConsultaMonday(req,res){
+        try{
+            const response = await postConsulta(req.body);
+            //ahora deberia guardar el contacto en la db tmb
+            return res.status(200).json({status:1, response:response});
+        }catch(error){
+            console.log(error)
+            return res.status(500).json({status:0 , error:error})
+        }
+    }
 }
 
 //lo anoto aca para no olvidarme

@@ -5,3 +5,4 @@ export const funnelRouter = Router();
 
 funnelRouter.post('/', FunnelController.postUser)  
 funnelRouter.get('/', FunnelController.help)
+funnelRouter.post('/consulta', FunnelController.postConsultaMonday)

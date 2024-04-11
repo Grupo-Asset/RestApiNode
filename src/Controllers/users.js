@@ -3,7 +3,6 @@ import { FacturaModel } from "../models/factura.js";
 import { PurchaseOrderModel } from "../models/purchaseOrder.js";
 import { validateUser , validatePartialUser } from "../Services/user.js";
 import { InventoryController } from "./inventory.js";
-
 export default class UserController {
     // constructor(){
     //   if (InventoryController.instance){
@@ -18,7 +17,7 @@ export default class UserController {
   
    static async getAll (req, res) {
       const usuarios = await UserModel.getAll();
-      res.json(usuarios)
+      res.json({holded:usuarios,db:result[0]})
     }
     static async getUser(req,res){
       const usuario = await UserModel.getUser(req.params.id)

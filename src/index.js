@@ -44,21 +44,9 @@ app.use(cors({
         return callback(new Error('Not allowed by CORS'))
     }}));
 
-// Routes
-// import testRouter from './routes/test.js';
-// import registerRouter from './routes/Register.js';
-// import getAllRouter from './routes/getAll.js';
-// import loginRouter from './routes/login.js';
-// import loginV2Router from './routes/loginV2.js';
-// import getAllProductoRouter from './routes/getAllProducto.js';
-// import getAllServicioRouter from './routes/getAllServicio.js';
-// import getAllFacturasRouter from './routes/getAllFacturas.js';
-// import uptadeUserRouter from './routes/uptadeUser.js';
+
 import getFacturaPDFRouter from './routes/getFacturaPDF.js';
-// import getDolarRouter from './routes/getDolar.js';
-// import getDolarV2Router from './routes/getDolarV2.js';
-// import getDolarV3Router from './routes/getDolarV3.js';
-// import postFacturaRouter from './routes/PostFactura.js';
+
 import { inventoryRouter } from './routes/inventory.js';
 import { userRouter } from './routes/users.js';
 import { UserModel } from './models/user.js'; // lo usa apra el init, la verdad que podria estar en el controller que ya lo importa pero no me pagan lo suficiente como para moverlo 
@@ -67,13 +55,8 @@ import { FacturaModel } from './models/factura.js';
 import { funnelRouter } from './routes/funnel.js';
 import { paymentRouter } from './routes/payments.routes.js';
 //routes
-//routes
-//routes
-// app.use('/routes/Register', registerRouter);
+
 app.use('/funnel',      funnelRouter)
-// app.use('/routes/test', testRouter);
-// app.use('/v1/getall',   getAllRouter);
-// app.use('/v1/venta',    postFacturaRouter); // Actualizada a la ruta correcta
 app.use('/user',        userRouter )
 app.use('/inventory',   inventoryRouter)
 app.use('/payment',     paymentRouter)
