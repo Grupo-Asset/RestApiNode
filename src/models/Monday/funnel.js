@@ -1,20 +1,24 @@
 import axios from 'axios'
 import mondaySdk from "monday-sdk-js"
-import {MONDAY_APY_KEY} as config from "../config.js";
+import {MONDAY_API_KEY}  from "../../config.js";
+
+
 export async function postConsulta(userDTO){
+  
+  const {name,mail, telefono,consulta } = userDTO;
+  
   const monday = mondaySdk();
   monday.setApiVersion("2024-01");
-  monday.setToken(`${config.MONDAY_APY_KEY}`)
+  monday.setToken(`${MONDAY_API_KEY}`)
     
-  const {name,mail, telefono,consulta } = userDTO;
-
-  const column_values = JSON.stringify({
-      texto0__1: mail,
-      tel_fono__1:telefono,
-      texto6__1 :consulta
-  });
-//lo dejo por que se supone que deberia poder crear el item con sus respectivas columnas 
-//pero como solo se supone... [TODO]
+  
+  //lo dejo por que se supone que deberia poder crear el item con sus respectivas columnas 
+  //pero como solo se supone... [TODO]
+  // const column_values = JSON.stringify({
+  //     texto0__1: mail,
+  //     tel_fono__1:telefono,
+  //     texto6__1 :consulta
+  // });
 // const query = `mutation{
 //     create_item (board_id:"6342754164",item_name:"francisco",column_values:"{name:\"francisco\"texto0__1:"ghisonifran@gmail.com",tel_fono__1:"1123202551",texto6__1:"probando"}") {
 //       id
@@ -25,6 +29,7 @@ export async function postConsulta(userDTO){
     
 
   try {
+
     const lead = await monday.api(`
     mutation {
       create_item(
