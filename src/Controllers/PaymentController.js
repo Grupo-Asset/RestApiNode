@@ -196,7 +196,7 @@ export class PaymentController {
                 "failure": `${config.HOST}`,
                 "pending": `${config.HOST}/feedback`
               },
-              notification_url:   `https://edde-2803-9800-a142-8002-81ed-c2b-784f-e6d3.ngrok-free.app/payment/webhook`,
+              notification_url:   `${config.HOST}/payment/webhook`,
               auto_return:        "approved", 
               external_reference: JSON.stringify(transfer),
             }
@@ -273,15 +273,15 @@ export class PaymentController {
     }
 
     static async mpSuccess(req,res){
-      res.redirect("http://localhost:3000/?status=${req.query.status}");
+      res.redirect("https://www.grupo-asset.com/?status=${req.query.status}");
     }
 
     static async mpFailure(req,res){
-      res.redirect("http://localhost:3000/?status=${req.query.status}");  
+      res.redirect("https://www.grupo-asset.com/?status=${req.query.status}");  
     }
 
     static async mpPending(req,res){
-      res.redirect("http://localhost:3000/?status=${req.query.status}");   
+      res.redirect("https://www.grupo-asset.com/?status=${req.query.status}");   
     }
 
     static async ppCreateOrder(req, res){
