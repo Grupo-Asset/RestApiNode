@@ -1,6 +1,6 @@
-const { Router } = require('express');
+import { Router } from 'express';
+import sdk from 'api';
 const router = Router();
-const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
 
 router.get('/v1/getFacturaPDF', async (req, res) => {
     try {
@@ -20,4 +20,4 @@ router.get('/v1/getFacturaPDF', async (req, res) => {
     }
 });
 
-module.exports = router;
+export default router;

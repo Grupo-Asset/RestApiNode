@@ -1,12 +1,10 @@
-const { Router } = require('express');
-const axios = require('axios');
-const router= Router();
+import { Router } from 'express';
+import axios from 'axios';
+import puppeteer from 'puppeteer';
 
-const puppeteer = require('puppeteer');
+const router = Router();
 
-
-
-router.get('/v3/getDolar', async (req, res) => {
+router.get('/https://listado.mercadolibre.com.ar/lotes-la-plata#D[A:lotes%20la%20plata]', async (req, res) => {
     try {
       const url = 'https://www.ambito.com/contenidos/dolar-mep.html';
   
@@ -18,30 +16,22 @@ router.get('/v3/getDolar', async (req, res) => {
   
       // Navigate to the page and wait until the 'load' event
       await page.goto(url, { waitUntil: 'load' });
-
-      
   
-      // Wait for the element containing the dollar value to appear on the page
-      // await page.waitForSelector('.venta .value');
-  
-      // Extract the dollar value (Venta) from the element
-      const dollarVentaValue = await page.evaluate(()=>{
-        const valueElements = document.querySelector('.data-valor');
-        return valueElements.innerText
-        // return Array.from(valueElements).map((element) => element.innerText);
+      // Extract the dollar value from the page
+      const dollarVentaValue = await page.evaluate(() => {
+        const valueElement = document.querySelector('.data-valor');
+        return valueElement.innerText;
+      });
 
-        
-      })
-  console.log(await dollarVentaValue)
       // Close the browser
       await browser.close();
   
-      // // Clean up the extracted value (remove any whitespace characters)
+      // Clean up the extracted value (remove any whitespace characters)
       const cleanedDollarVentaValue = dollarVentaValue.trim();
   
-      // // Convert the dollar value to a number (you might want to perform further processing here if needed)
+      // Convert the dollar value to a number
       const parsedDollarVentaValue = parseFloat(cleanedDollarVentaValue.replace('$', '').replace(',', '.'));
-      console.log(parsedDollarVentaValue)
+  
       res.status(200).json({
         type: 'Dolar MEP Venta',
         price: parsedDollarVentaValue,
@@ -53,5 +43,4 @@ router.get('/v3/getDolar', async (req, res) => {
     }
   });
 
-  
-module.exports =  router;
+export default router;

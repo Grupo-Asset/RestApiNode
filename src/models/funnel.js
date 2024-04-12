@@ -1,14 +1,11 @@
-import axios from 'axios';
-// const sdk = require('api')('@holded/v1.0#3cm531nlbw08qsz');
+import axios from 'axios'
+export class FunnelModel {
 
-
-class FunnelService {
-
-    async getFunnel(){
+    static async getFunnel(){
         return "xd"
     }
 
-    async postUser(req){
+    static async postUser(req){
         console.log("postUser:",req.body)
         const options = {
             method: 'POST',
@@ -38,4 +35,3 @@ class FunnelService {
             return {status: "suscripcion exitosa", error: false}
     }
 }
-export default FunnelService;
