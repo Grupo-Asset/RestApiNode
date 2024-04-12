@@ -4,10 +4,6 @@ import morgan from 'morgan';
 import mercadopago from 'mercadopago';
 import path from 'path';
 import axios from 'axios';
-
-
-
-import ventaRouter from './routes/PostFactura.js';
 import numeral from 'numeral';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
@@ -60,7 +56,6 @@ app.use('/inventory',   inventoryRouter)
 app.use('/payment',     paymentRouter)
 app.use(getFacturaPDFRouter);
 
-
 import PaymentController from './Controllers/PaymentController.js';
 import PaymentService from './Services/PaymentService.js';
 const PaymentInstance = new PaymentController(new PaymentService());
@@ -94,3 +89,4 @@ server.on('error', (error) => {
         console.log(`Server listening on port ${nextPort}`);
     });
 });
+
